@@ -1,0 +1,90 @@
+@import url('https://fonts.cdnfonts.com/css/chirp-2');
+@import url('https://fonts.cdnfonts.com/css/hero-4');
+body{
+    background: linear-gradient(to top left, #F5F8FA, #F5F8FA, #657786);
+    background-repeat: no-repeat;
+    background-attachment:fixed;
+}
+
+#toptab {
+    text-align: center;
+    font-family: 'Hero', sans-serif;
+    color: white;
+}
+
+#login{
+    font-family: 'Hero', sans-serif;
+    text-align: center;
+    background-color: #aab8c2;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%23657786' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E"); 
+    opacity: 70%;
+    color: white;
+    /* outline: 3px solid black; */
+    box-shadow: 3px 3px black;
+    border-radius: 10px;
+    margin: 10em 10em 10em 10em;
+    padding: 1em 1em 15em 1em;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+
+    }
+
+#boxing{
+    /* margin-top: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%; */
+}
+
+
+/* label:after { content: ": " } */
+
+#submit{
+    font-family: 'Hero', sans-serif;
+    margin-top: 15px;
+    border-radius: 5px;
+    width: 300px;
+    background: linear-gradient(to bottom right, #F5F8FA, #F5F8FA, #657786);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid black;
+    
+}
+
+#decor{
+    text-decoration: none;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-top: 10px;
+    border: none;
+}
+
+a :visited {
+    color: inherit;
+}
+
+#varr{
+    padding:0.8em;
+    border-radius: 5px;
+    background-color:  rgba(128, 128, 128, 0.001);
+    width: 300px;
+    margin-left: 300px;
+    margin-right: 300px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 2px solid black;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color:rgba(255, 255, 255, 0.559); 
+    font-family: 'Hero', sans-serif;
+    opacity: 1; 
+  }
+#wrapper{
+    
+}
