@@ -1,12 +1,14 @@
 //import './Login.css'
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Axios from "axios";
 
 function Login() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loginError, setLoginError] = useState('');
+    const [loginInfo, setLoginInfo] = useState('');
+
+    Axios.defaults.withCredentials = true;
 
     const login = () => {
         Axios.post('http://localhost:3001/login', {
@@ -14,13 +16,20 @@ function Login() {
             password: password,
         }).then((response) => {
             if (response.data.message) {
-                setLoginError(response.data.message);
-                console.log(response.data.message);
+                setLoginInfo(response.data.message);
             }
         }
         );
     };
     
+    useEffect(() => {
+        Axios.get("http://localhost:3001/login").then((response) => {
+          if (response.data.loggedIn == true) {
+            setLoginInfo(response.data.user[0].username);
+          }
+        });
+      }, []);
+
     return (
         <div className="App">
             <div className = "Toptab"></div>
@@ -41,7 +50,7 @@ function Login() {
               />
             <button onClick={login}>Login</button>
 
-            <h3>{loginError}</h3>
+            <h3>{loginInfo}</h3>
         </div>
     );
 }
