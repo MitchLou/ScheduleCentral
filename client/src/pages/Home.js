@@ -5,7 +5,7 @@ import Employee from "../pages/Employee";
 import Supervisor from "../pages/Supervisor";
 import Admin from "../pages/Admin";
 
-export default function Main() {
+export default function Home() {
   const [role, setRole] = useState("");
 
   Axios.defaults.withCredentials = true;

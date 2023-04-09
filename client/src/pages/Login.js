@@ -1,8 +1,11 @@
 //import './Login.css'
 import React, {useEffect, useState} from "react";
 import Axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 function Login() {
+    let navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -17,6 +20,9 @@ function Login() {
         }).then((response) => {
             if (response.data.message) {
                 setLoginInfo(response.data.message);
+                console.log(response.data.message);
+            } else {
+                navigate("/")
             }
         }
         );
@@ -25,7 +31,10 @@ function Login() {
     useEffect(() => {
         Axios.get("http://localhost:3001/login").then((response) => {
           if (response.data.loggedIn == true) {
-            setLoginInfo(response.data.user[0].username);
+            navigate("/")
+            
+        
+             
           }
         });
       }, []);
