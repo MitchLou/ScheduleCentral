@@ -63,6 +63,26 @@ app.post('/login', (req, res) => {
     );
 });
 
+app.get("/employees", (req, res) => {
+  db.query("SELECT * FROM allemployees", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+app.get("/schedule", (req, res) => {
+  db.query("SELECT * FROM schedules", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.get("/login", (req, res) => {
     if (req.session.user) {
       res.send({ loggedIn: true, user: req.session.user });

@@ -32,9 +32,6 @@ function Login() {
         Axios.get("http://localhost:3001/login").then((response) => {
           if (response.data.loggedIn == true) {
             navigate("/")
-            
-        
-             
           }
         });
       }, []);
