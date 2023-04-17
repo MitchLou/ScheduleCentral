@@ -36,7 +36,7 @@ app.use(
 const db = mysql.createConnection({
     user: "root",
     host: "localhost",
-    password: "password",
+    password: "rockclimb53",
     database: "schedulecentral"
 });
 
@@ -90,6 +90,39 @@ app.get("/login", (req, res) => {
       res.send({ loggedIn: false });
     }
   });
+
+
+
+  app.post("/create", (req, res) => {
+    const name = req.body.name;
+    const address= req.body.address;
+    const username= req.body.username;
+    const password= req.body.password;
+    const phonenumber= req.body.phonenumber;
+    const department= req.body.department;
+    
+    
+    db.query(
+        "INSERT INTO addemployees (name, address, username, password, phonenumber, department) VALUES (?,?,?,?,?,?)", 
+        [name, address, username, password, phonenumber, department], 
+        (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.send("Values Inserted");
+          }
+        }
+    );
+      });
+
+
+
+
+
+
+
+
+
 
 app.listen(3001, () => {
     console.log("yey, your server is running on port 3001");

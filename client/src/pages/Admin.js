@@ -8,7 +8,31 @@ function Admin() {
     const [scheduleList, setScheduleList] = useState([]);
     const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), {weekStartsOn: 0}));
     const [weekEnd, setWeekEnd] = useState(endOfWeek(new Date(), {weekEndsOn: 6}));
-  
+    const [loginInfo, setLoginInfo] = useState('');
+
+
+    const[name, setName] = useState('');
+    const[address, setAddress] = useState('');
+    const[username, setUsername] = useState('');
+    const[password, setPassword] = useState('');
+    const[phonenumber,setPhonenumber]= useState('0');
+    const[department,setDepartment]= useState('');
+    
+    const displayInfo = () => {
+      console.log(name + address + username + password + phonenumber + department);
+    };
+    
+    
+      const addEmployee = () =>{
+    Axios.post("http://localhost:3001/create",{name:name, address:address, username:username, 
+    password:password, phonenumber:phonenumber, department:department})
+    .then(() =>{
+      console.log("success");})
+    };
+
+
+
+
 
     const getEmployees = () => {
         Axios.get("http://localhost:3001/employees").then((response) => {
@@ -87,8 +111,34 @@ function Admin() {
     </div>
     
 
+
+
+
+    <h3>{loginInfo}</h3>
+    <h3>Admin</h3>
+    <br></br>
+    <br></br>
+    <br></br>
+    <div className="Information">
+    <label>Name:</label>
+    <input type= "text" onChange={(event) => {setName(event.target.value)}} />
+    <label>Address:</label>
+    <input type= "text" onChange={(event) => {setAddress(event.target.value)}} />
+    <label>Username:</label>
+    <input type= "text" onChange={(event) => {setUsername(event.target.value)}} />
+    <label>Password:</label>
+    <input type= "text" onChange={(event) => {setPassword(event.target.value)}} />
+    <label>Phone Number:</label>
+    <input type= "number" onChange={(event) => {setPhonenumber(event.target.value)}} />
+    <label>Department:</label>
+    <input type= "text" onChange={(event) => {setDepartment(event.target.value)}} />
+    <button onClick={addEmployee}>Add Employee</button>
+
+
+    </div>
       </div>
   )
 }
+
 
 export default Admin;
