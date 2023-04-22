@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
@@ -27,7 +27,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      expires: 60 * 60 * 24,
+      expires: null
     },
   })
 );
@@ -36,35 +36,35 @@ app.use(
 const db = mysql.createConnection({
     user: "root",
     host: "localhost",
-    password: "rockclimb53",
+    password: "password",
     database: "schedulecentral"
 });
 
 app.post('/login', (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+  const username = req.body.username;
+  const password = req.body.password;
 
-    db.query(
-        "SELECT * FROM allemployees WHERE username = ? AND password = ?", 
-        [username, password], 
-        (err, result) => {
-            if (err) {
-                res.send({err: err});
-            }
+  db.query(
+      "SELECT * FROM login_info WHERE username = ? AND password = ?", 
+      [username, password], 
+      (err, result) => {
+          if (err) {
+              res.send({err: err});
+          }
 
-            if (result.length > 0) {
-                req.session.user = result;
-                console.log(req.session.user);
-                res.send(result);
-            } else {
-                res.send({ message: "Invalid username or password" });
-            }
-        }
-    );
+          if (result.length > 0) {
+              req.session.user = result;
+              console.log(req.session.user);
+              res.send(result);
+          } else {
+              res.send({ message: "Invalid username or password" });
+          }
+      }
+  );
 });
 
 app.get("/employees", (req, res) => {
-  db.query("SELECT * FROM allemployees", (err, result) => {
+  db.query("SELECT * FROM all_employees", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -83,6 +83,38 @@ app.get("/schedule", (req, res) => {
   });
 });
 
+app.put("/update", (req, res) => {
+  const id = req.body.id;
+  const workDate = req.body.workDate;
+  const workStart = req.body.workStart;
+  const workEnd = req.body.workEnd;
+  const oldDate = req.body.oldDate;
+  const employeeID = req.body.employee_ID;
+
+  console.log(req.body.workDate);
+  db.query(
+    "UPDATE schedules SET work_date = ?, start_work_hour = ?, end_work_hour = ? WHERE id = ? AND work_date = ?",
+    [workDate, workStart, workEnd, id, oldDate],
+    (err, result) => {
+      if (err) {
+        db.query(
+          "INSERT INTO schedules (employee_ID, work_date, start_work_hour, end_work_hour) VALUES (?,?,?,?)", 
+          [employeeID, workDate, workStart, workEnd], 
+          (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              res.send("Values Inserted");
+            }
+          }
+      );
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
 app.get("/login", (req, res) => {
     if (req.session.user) {
       res.send({ loggedIn: true, user: req.session.user });
@@ -94,17 +126,13 @@ app.get("/login", (req, res) => {
 
 
   app.post("/create", (req, res) => {
-    const name = req.body.name;
-    const address= req.body.address;
-    const username= req.body.username;
-    const password= req.body.password;
-    const phonenumber= req.body.phonenumber;
-    const department= req.body.department;
-    
-    
+    const username = req.body.username;
+    const password = req.body.password;
+    const role = req.body.role;
+  
     db.query(
-        "INSERT INTO addemployees (name, address, username, password, phonenumber, department) VALUES (?,?,?,?,?,?)", 
-        [name, address, username, password, phonenumber, department], 
+        "INSERT INTO login_info (username, password, role) VALUES (?,?,?)", 
+        [username, password, role], 
         (err, result) => {
           if (err) {
             console.log(err);
@@ -117,13 +145,6 @@ app.get("/login", (req, res) => {
 
 
 
-
-
-
-
-
-
-
-app.listen(3001, () => {
+app.listen(3001, (req, res) => {
     console.log("yey, your server is running on port 3001");
 });

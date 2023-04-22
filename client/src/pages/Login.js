@@ -1,7 +1,9 @@
-//import './Login.css'
+import './Login.css'
 import React, {useEffect, useState} from "react";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+
 
 
 function Login() {
@@ -37,26 +39,42 @@ function Login() {
       }, []);
 
     return (
-        <div className="App">
-            <div className = "Toptab"></div>
-            <h1>Schedule Central</h1>
-            <input
+            <div className='login-container'>
+        
+            <div className='toptab'>                
+                <img className="LOGO" src={require('./logo1116v2.png')} />  
+            </div> 
+
+            <div className ="login">
+            <h3 id = "signIn">Sign In</h3>
+            
+            <form>
+
+            <div id = "boxing">
+            <input className = "varr"
             type = "text" 
             placeholder = "Username"
             onChange={(e) => {
                 setUsername(e.target.value);
             }} 
             />
-            <input
+            </div>
+
+            <div id = "boxing">
+            <input className = "varr"
              type = "text"
              placeholder = "Password"
              onChange={(e) => {
                  setPassword(e.target.value);
              }}
               />
-            <button onClick={login}>Login</button>
+            </div>
+            <button className="submit" onClick={login}>Login</button>
 
             <h3>{loginInfo}</h3>
+            </form>
+            </div>
+            <i className="glyphicon glyphicon-user w3-text-teal"></i>
         </div>
     );
 }
