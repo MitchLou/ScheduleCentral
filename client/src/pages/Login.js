@@ -13,8 +13,12 @@ function Login() {
     const [passwordReg, setPasswordReg] = useState("");
     const [buttonPopup, setButtonPopup] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const[name, setName] = useState('');
+    const[position, setPosition] = useState('');
+    const[username, setUsername] = useState('');
+    const[password, setPassword] = useState('');
+    const[phonenumber, setPhonenumber]= useState('0');
+    const[department, setDepartment]= useState('');
     const [loginStatus, setLoginStatus] = useState("");
 
     Axios.defaults.withCredentials = true;
@@ -23,6 +27,10 @@ function Login() {
         Axios.post("http://localhost:3001/register", {
           username: usernameReg,
           password: passwordReg,
+          name: name,
+          position: position,
+          phonenumber: phonenumber,
+          department: parseInt(department),
         }).then((response) => {
           console.log(response);
         });
@@ -69,6 +77,7 @@ function Login() {
             <h3 id = "signIn">Sign In</h3>
             
             <form>
+              
 
             <div id = "boxing">
             <input className = "varr"
@@ -99,7 +108,36 @@ function Login() {
         <button className='registerButton' onClick={() => setButtonPopup(true)}>Register</button>
         </main>
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-        <label>Name:</label>
+        <label>Full Name:</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
+        />
+        <label>Position:</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setPosition(e.target.value);
+          }}
+        />
+        <label>Phone #:</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setPhonenumber(e.target.value);
+          }}
+        />
+        <label htmlFor="department">Department:</label>
+        <select id="department" onChange={(e) => {
+        setDepartment(e.target.value);
+          }}>
+        <option value="0"></option>
+        <option value="1">Nursing</option>
+        <option value="2">Bookeeping</option>
+        <option value="3">HR</option>
+        </select>
         <label>Username</label>
         <input
           type="text"

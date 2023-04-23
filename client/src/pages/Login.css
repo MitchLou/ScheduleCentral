@@ -180,14 +180,20 @@ input.empty {
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    color: black;
 }
 
 .popup-inner{
     position: relative;
-    padding: 40px;
+    padding-right: 200px;
+    padding-left: 200px;
+    padding-top: 50px;
+    padding-bottom: 50px;
     width: 100%;
     max-width: 640px;
-    background-color: #FFF;
+    background-color: #fcfafa;
+    color: Black;
+    
 }
 
 .popup-inner .close-btn{
@@ -195,5 +201,20 @@ input.empty {
     top: 16px;
     right: 16px;
 }
-
+  
+  select {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: #0077ff;
+    box-shadow: 0 0 0 0.125rem rgba(0, 119, 255, 0.25);
+  }
 

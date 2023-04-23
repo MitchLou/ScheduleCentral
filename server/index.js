@@ -46,21 +46,43 @@ const db = mysql.createConnection({
 app.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
+  const name = req.body.name;
+  const position = req.body.position;
+  const phonenumber = req.body.phonenumber;
+  const department = req.body.department;
 
   bcrypt.hash(password, saltRounds, (err, hash) => {
     if (err) {
       console.log(err);
     }
-
+  
     db.query(
       "INSERT INTO login_info (username, password) VALUES (?,?)",
       [username, hash],
       (err, result) => {
-        console.log(err);
+        if (err) {
+          console.log(err);
+        } else {
+          // Get the login ID for the inserted user
+          const login_id = result.insertId;
+          
+          // Insert the employee information with the retrieved login ID
+          db.query(
+            "INSERT INTO all_employees (name, login_ID, position, phone_number, department_ID) VALUES (?,?,?,?,?)", 
+            [name, login_id, position, phonenumber, department], 
+            (err, result) => {
+              if (err) {
+                console.log(err);
+              } else {
+                res.send("Values Inserted");
+              }
+            }
+          );
+        }
       }
     );
-  });
-});
+  })});
+  
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
