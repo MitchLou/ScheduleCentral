@@ -4,6 +4,7 @@ import Axios from "axios";
 import Employee from "../pages/Employee";
 import Supervisor from "../pages/Supervisor";
 import Admin from "../pages/Admin";
+import NoRole from "../pages/NoRole";
 
 export default function Home() {
   const [role, setRole] = useState("");
@@ -13,6 +14,7 @@ export default function Home() {
     Axios.get("http://localhost:3001/login").then((response) => {
       if (response.data.loggedIn == true) {
         setRole(response.data.user[0].role);
+        console.log(role)
       }
     });
   }, []);
@@ -22,6 +24,7 @@ export default function Home() {
       {role == "employee" && <Employee />}
       {role == "supervisor" && <Supervisor />}
       {role == "admin" && <Admin />}
+      {role == null && <NoRole />}
     </div>
   );
 }

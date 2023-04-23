@@ -8,6 +8,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 
 app.use(express.json());
 app.use(
@@ -40,26 +43,49 @@ const db = mysql.createConnection({
     database: "schedulecentral"
 });
 
-app.post('/login', (req, res) => {
+app.post("/register", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  bcrypt.hash(password, saltRounds, (err, hash) => {
+    if (err) {
+      console.log(err);
+    }
+
+    db.query(
+      "INSERT INTO login_info (username, password) VALUES (?,?)",
+      [username, hash],
+      (err, result) => {
+        console.log(err);
+      }
+    );
+  });
+});
+
+app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
   db.query(
-      "SELECT * FROM login_info WHERE username = ? AND password = ?", 
-      [username, password], 
-      (err, result) => {
-          if (err) {
-              res.send({err: err});
-          }
-
-          if (result.length > 0) {
-              req.session.user = result;
-              console.log(req.session.user);
-              res.send(result);
+    "SELECT * FROM login_info WHERE username = ?",
+    [username],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      } else if (result.length > 0) {
+        bcrypt.compare(password, result[0].password, (error, response) => {
+          if (response) {
+            req.session.user = result;
+            console.log(req.session.user);
+            res.send(result);
           } else {
-              res.send({ message: "Invalid username or password" });
+            res.send({ message: "Wrong username/password combination!" });
           }
+        });
+      } else {
+        res.send({ message: "User doesn't exist" });
       }
+    }
   );
 });
 
@@ -129,13 +155,32 @@ app.put("/update", (req, res) => {
   );
 });
 
-app.get("/login", (req, res) => {
-    if (req.session.user) {
-      res.send({ loggedIn: true, user: req.session.user });
-    } else {
-      res.send({ loggedIn: false });
+app.get("/department/:id", (req, res) => {
+  const login_id = req.params.id;
+  console.log(login_id);
+
+  db.query(
+    "SELECT department_ID FROM all_employees WHERE login_ID = ?",
+    [login_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Error retrieving department ID");
+      } else {
+        res.send(result);
+      }
     }
-  });
+  );
+});
+
+app.get("/login", (req, res) => {
+  if (req.session.user) {
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    res.send({ loggedIn: false });
+  }
+});
+
 
 
 
