@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Axios from "axios";
+import './Employee.css'
 import {addDays, format, startOfWeek, endOfWeek, isSameWeek, isMonday, isTuesday, isWednesday, isThursday, isFriday, isSaturday, isSunday, setDate} from "date-fns";
 
 function Employee() {
@@ -51,53 +52,67 @@ function Employee() {
   return (
     
     <div className="Attributes">
-      <div>
-      <button onClick={handleBackwardArrowClick}>Backward</button>
-      <span>Week {format(weekStart, "MM/dd/yyyy")} - {format(weekEnd, "MM/dd/yyyy")}</span>
-      <button onClick={handleForwardArrowClick}>Forward</button>
-    </div>
-        
-        <div>
-      <h1>Weekly Schedule</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Sunday</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
-          </tr>
-        </thead>
-        <tbody>
-         {/* Render rows for each employee of the week */}
-         {employeeList.map((employee, columnIndex) => (
-          <tr key={columnIndex}>
-            <td>{employee.name}</td>
-            {scheduleList.map((schedule, cellIndex) => (
-              employee.id_employees === schedule.employee_ID? (
-              <td key={cellIndex}>
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isSunday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isMonday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isTuesday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isWednesday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isThursday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isFriday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isSaturday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                
-              </td>
-            ) : null
-            ))}
-          </tr>
+  <div>
+    <button onClick={handleBackwardArrowClick}>Backward</button>
+    <span>Week {format(weekStart, "MM/dd/yyyy")} - {format(weekEnd, "MM/dd/yyyy")}</span>
+    <button onClick={handleForwardArrowClick}>Forward</button>
+  </div>
+
+  <div>
+    <h1>Weekly Schedule</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Sunday</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Saturday</th>
+        </tr>
+      </thead>
+      <tbody>
+        {/* Render rows for each employee of the week */}
+        {employeeList.map((employee, rowIndex) => (
+          employee.login_ID === loginInfo ? (
+            <tr key={rowIndex}>
+              <td>{employee.name}</td>
+              {[
+                { isDay: isSunday, label: "Sun" },
+                { isDay: isMonday, label: "Mon" },
+                { isDay: isTuesday, label: "Tue" },
+                { isDay: isWednesday, label: "Wed" },
+                { isDay: isThursday, label: "Thu" },
+                { isDay: isFriday, label: "Fri" },
+                { isDay: isSaturday, label: "Sat" },
+              ].map(({ isDay, label }, columnIndex) => (
+                <td key={columnIndex}>
+                  {scheduleList.map((schedule, cellIndex) => {
+                    if (
+                      employee.id_employees === schedule.employee_ID &&
+                      isSameWeek(new Date(schedule.work_date), weekEnd) &&
+                      isDay(new Date(schedule.work_date))
+                    ) {
+                      return (
+                        <div key={cellIndex}>
+                          {schedule.start_work_hour}-{schedule.end_work_hour}
+                        </div>
+                      );
+                    } else {
+                      return null;
+                    }
+                  })}
+                </td>
+              ))}
+            </tr>
+          ) : null
         ))}
-        </tbody>
-      </table>
-    </div>
-   
-      </div>
+      </tbody>
+    </table>
+  </div>
+</div>
   )
 }
 

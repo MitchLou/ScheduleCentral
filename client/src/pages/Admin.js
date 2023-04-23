@@ -10,7 +10,7 @@ function Admin() {
     const [scheduleList, setScheduleList] = useState([]);
     const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), {weekStartsOn: 0}));
     const [weekEnd, setWeekEnd] = useState(endOfWeek(new Date(), {weekEndsOn: 6}));
-    const [buttonPopup, setButtonPopup] = useState(false);
+    const [updatePopup, setupdatePopup] = useState(false);
 
 
     const [workDate, setWorkDate] = useState(new Date());
@@ -43,13 +43,22 @@ function Admin() {
         });
       };
 
-      const updateEmployee = (id, oldDate, employee_ID) => {
-        console.log(employee_ID);
-        Axios.put("http://localhost:3001/update", { workDate: workDate,workStart: workStart, workEnd: workEnd, oldDate: oldDate, id: id, employee_ID: employee_ID }).then(
-          (response) => {
-            alert("updated");
-          }
-        );
+      const updateEmployee = (id) => {
+        console.log(id);
+        Axios.put("http://localhost:3001/update", {
+          workDate: workDate,
+          workStart: workStart,
+          workEnd: workEnd,
+          id: id,
+        })
+          .then((response) => {
+            alert("Updated successfully!");
+            getSchedules(); // Reload schedules after update
+          })
+          .catch((error) => {
+            alert("Error occurred while updating the employee's schedule.");
+            console.log(error);
+          });
       };
 
       useEffect(() => {
@@ -74,116 +83,104 @@ function Admin() {
             setWeekEnd(newEnd); // Update week range state
           };
 
-  return (
+          return (
     
-    <div className="Attributes">
-      <div>
-      <button onClick={handleBackwardArrowClick}>Backward</button>
-      <span>Week {format(weekStart, "MM/dd/yyyy")} - {format(weekEnd, "MM/dd/yyyy")}</span>
-      <button onClick={handleForwardArrowClick}>Forward</button>
-    </div>
+            <div className="Attributes">
+          <div>
+            <button onClick={handleBackwardArrowClick}>Backward</button>
+            <span>Week {format(weekStart, "MM/dd/yyyy")} - {format(weekEnd, "MM/dd/yyyy")}</span>
+            <button onClick={handleForwardArrowClick}>Forward</button>
+          </div>
         
-        <div>
-      <h1>Weekly Schedule</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Sunday</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
-            <th>Saturday</th>
-          </tr>
-        </thead>
-        <tbody>
+          <div>
+            <h1>Weekly Schedule</h1>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Sunday</th>
+                  <th>Monday</th>
+                  <th>Tuesday</th>
+                  <th>Wednesday</th>
+                  <th>Thursday</th>
+                  <th>Friday</th>
+                  <th>Saturday</th>
+                </tr>
+              </thead>
+              <tbody>
+  {/* Render rows for each employee of the week */}
+  {employeeList.map((employee, rowIndex) => (
+    <tr key={rowIndex}>
+      <td>{employee.name}</td>
+      {[
+        { isDay: isSunday, label: "Sun" },
+        { isDay: isMonday, label: "Mon" },
+        { isDay: isTuesday, label: "Tue" },
+        { isDay: isWednesday, label: "Wed" },
+        { isDay: isThursday, label: "Thu" },
+        { isDay: isFriday, label: "Fri" },
+        { isDay: isSaturday, label: "Sat" },
+      ].map(({ isDay, label }, columnIndex) => (
+        <td key={columnIndex}>
+          {scheduleList.map((schedule, cellIndex) => {
+            if (
+              employee.id_employees === schedule.employee_ID &&
+              isSameWeek(new Date(schedule.work_date), weekEnd) &&
+              isDay(new Date(schedule.work_date))
+            ) {
+              return (
+                <div key={cellIndex}>
+                  {schedule.start_work_hour}-{schedule.end_work_hour}
+                </div>
+              );
+            } else {
+              return null;
+            }
+          })}
+        </td>
+      ))}
+      <td>
+        
+            <input
+              type="date"
+              placeholder="2000..."
+              onChange={(event) => {
+                setWorkDate(event.target.value);
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Work Start..."
+              onChange={(event) => {
+                setWorkStart(event.target.value);
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Work End..."
+              onChange={(event) => {
+                setWorkEnd(event.target.value);
+              }}
+            />
+            <button
+              onClick={() => {
+                console.log(employee.id_employees);
+                updateEmployee(employee.id_employees);
+              }}
+            >
 
-          {/* Render rows for each employee of the week */}
-         {employeeList.map((employee, columnIndex) => (
-          <tr key={columnIndex}>
-            <td>{employee.name}</td>
-            <td>
-              <input
-                  type="date"
-                  placeholder="2000..."
-                  onChange={(event) => {
-                    setWorkDate(event.target.value);
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Work Start..."
-                  onChange={(event) => {
-                    setWorkStart(event.target.value);
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Work End..."
-                  onChange={(event) => {
-                    setWorkEnd(event.target.value);
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    updateEmployee(employee.id_employees);
-                  }}
-                >
-                  {" "}
-                  Update
-                </button>
-              </td>
-            {scheduleList.map((schedule, cellIndex) => (
-              employee.id_employees === schedule.employee_ID? (
-              <td key={cellIndex}>
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isSunday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isMonday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isTuesday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isWednesday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isThursday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isFriday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                {(isSameWeek(new Date(schedule.work_date), weekEnd) && isSaturday(new Date(schedule.work_date)))?  schedule.start_work_hour + "-" + schedule.end_work_hour : ""}
-                
-              </td>
-            ) : null
-            ))}
-          </tr>
-        ))}
-
-
-
-
-
-
-        </tbody>
-      </table>
-    </div>
-    
-
-
-    <br></br>
-    <br></br>
-    <br></br>
-    <div className="Information">
-    <main>
-        <button onClick={() => setButtonPopup(true)}>add employee</button>
-        </main>
-        <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-    <label>Username:</label>
-    <input type= "text" onChange={(event) => {setUserName(event.target.value)}} />
-    <label>Password:</label>
-    <input type= "text" onChange={(event) => {setPassword(event.target.value)}} />
-    <label>Role:</label>
-    <input type= "text" onChange={(event) => {setRole(event.target.value)}} />
-    <button onClick={addEmployee}>Add Employee</button>
-    </Popup>
-
-    </div>
-      </div>
-  )
+              Update
+            </button>
+         
+        
+      </td>
+    </tr>
+  ))}
+</tbody>
+            </table>
+          </div>
+        </div>
+          )
 }
 
 

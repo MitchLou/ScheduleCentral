@@ -33,6 +33,7 @@ function Login() {
     useEffect(() => {
         Axios.get("http://localhost:3001/login").then((response) => {
           if (response.data.loggedIn == true) {
+            console.log("Working");
             navigate("/")
           }
         });

@@ -88,28 +88,42 @@ app.put("/update", (req, res) => {
   const workDate = req.body.workDate;
   const workStart = req.body.workStart;
   const workEnd = req.body.workEnd;
-  const oldDate = req.body.oldDate;
-  const employeeID = req.body.employee_ID;
 
-  console.log(req.body.workDate);
   db.query(
-    "UPDATE schedules SET work_date = ?, start_work_hour = ?, end_work_hour = ? WHERE id = ? AND work_date = ?",
-    [workDate, workStart, workEnd, id, oldDate],
-    (err, result) => {
+    "SELECT * FROM schedules WHERE employee_ID = ? AND work_date = ?",
+    [id, workDate],
+    (err, rows) => {
       if (err) {
+        console.log(err);
+        res.status(500).send("Error while updating schedule");
+      } else if (rows.length === 0) {
+        // No row found, insert a new one
         db.query(
           "INSERT INTO schedules (employee_ID, work_date, start_work_hour, end_work_hour) VALUES (?,?,?,?)", 
-          [employeeID, workDate, workStart, workEnd], 
+          [id, workDate, workStart, workEnd], 
           (err, result) => {
             if (err) {
               console.log(err);
+              res.status(500).send("Error while inserting schedule");
             } else {
-              res.send("Values Inserted");
+              res.send("Schedule inserted");
             }
           }
-      );
+        );
       } else {
-        res.send(result);
+        // Row found, update it
+        db.query(
+          "UPDATE schedules SET start_work_hour = ?, end_work_hour = ? WHERE employee_ID = ? AND work_date = ?",
+          [workStart, workEnd, id, workDate],
+          (err, result) => {
+            if (err) {
+              console.log(err);
+              res.status(500).send("Error while updating schedule");
+            } else {
+              res.send("Schedule updated");
+            }
+          }
+        );
       }
     }
   );
