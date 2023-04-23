@@ -20,6 +20,7 @@ function Login() {
     const[phonenumber, setPhonenumber]= useState('0');
     const[department, setDepartment]= useState('');
     const [loginStatus, setLoginStatus] = useState("");
+    const[role, setRole] = useState(null);
 
     Axios.defaults.withCredentials = true;
 
@@ -31,6 +32,7 @@ function Login() {
           position: position,
           phonenumber: phonenumber,
           department: parseInt(department),
+          role: role,
         }).then((response) => {
           console.log(response);
         });
@@ -46,6 +48,7 @@ function Login() {
             setLoginStatus(response.data.message);
           } else {
             setLoginStatus(response.data[0].username);
+            navigate("/");
             
           }
         }).catch((error) => {
@@ -76,7 +79,7 @@ function Login() {
             <div className ="login">
             <h3 id = "signIn">Sign In</h3>
             
-            <form>
+            
               
 
             <div id = "boxing">
@@ -101,11 +104,11 @@ function Login() {
             <button className="submit" onClick={login}>Login</button>
 
             <h3>{loginStatus}</h3>
-            </form>
+            
 
             <div className="Information">
       <main>
-        <button className='registerButton' onClick={() => setButtonPopup(true)}>Register</button>
+        <button className='submit' onClick={() => setButtonPopup(true)}>Register</button>
         </main>
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
         <label>Full Name:</label>

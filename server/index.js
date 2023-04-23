@@ -50,6 +50,7 @@ app.post("/register", (req, res) => {
   const position = req.body.position;
   const phonenumber = req.body.phonenumber;
   const department = req.body.department;
+  const role = req.body.role;
 
   bcrypt.hash(password, saltRounds, (err, hash) => {
     if (err) {
@@ -57,8 +58,8 @@ app.post("/register", (req, res) => {
     }
   
     db.query(
-      "INSERT INTO login_info (username, password) VALUES (?,?)",
-      [username, hash],
+      "INSERT INTO login_info (username, password, role) VALUES (?,?,?)",
+      [username, hash, role],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -177,6 +178,17 @@ app.put("/update", (req, res) => {
   );
 });
 
+app.delete("/delete/:id", (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM employees WHERE id = ?", id, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.get("/department/:id", (req, res) => {
   const login_id = req.params.id;
   console.log(login_id);
@@ -202,29 +214,6 @@ app.get("/login", (req, res) => {
     res.send({ loggedIn: false });
   }
 });
-
-
-
-
-  app.post("/create", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const role = req.body.role;
-  
-    db.query(
-        "INSERT INTO login_info (username, password, role) VALUES (?,?,?)", 
-        [username, password, role], 
-        (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            res.send("Values Inserted");
-          }
-        }
-    );
-      });
-
-
 
 app.listen(3001, (req, res) => {
     console.log("yey, your server is running on port 3001");

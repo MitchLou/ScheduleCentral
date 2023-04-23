@@ -10,7 +10,10 @@ function Admin() {
     const [scheduleList, setScheduleList] = useState([]);
     const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), {weekStartsOn: 0}));
     const [weekEnd, setWeekEnd] = useState(endOfWeek(new Date(), {weekEndsOn: 6}));
-    const [updatePopup, setupdatePopup] = useState(false);
+
+    const [usernameReg, setUsernameReg] = useState("");
+    const [passwordReg, setPasswordReg] = useState("");
+    const [buttonPopup, setButtonPopup] = useState(false);
 
 
     const [workDate, setWorkDate] = useState(new Date());
@@ -18,17 +21,36 @@ function Admin() {
     const [workEnd, setWorkEnd] = useState("");
 
 
-    const[username, setUserName] = useState('');
+    const[name, setName] = useState('');
+    const[position, setPosition] = useState('');
+    const[username, setUsername] = useState('');
     const[password, setPassword] = useState('');
+    const[phonenumber, setPhonenumber]= useState('0');
+    const[department, setDepartment]= useState('');
+    const [loginStatus, setLoginStatus] = useState("");
     const[role, setRole] = useState('');
     
     
     
-      const addEmployee = () =>{
-    Axios.post("http://localhost:3001/create",{username, password, role})
-    .then(() =>{
-      console.log("success");})
-    };
+      const addEmployee = () => {
+        Axios.post("http://localhost:3001/register", {
+          username: usernameReg,
+          password: passwordReg,
+          name: name,
+          position: position,
+          phonenumber: phonenumber,
+          department: parseInt(department),
+          role: role,
+        }).then((response) => {
+          console.log(response);
+        });
+      };
+
+      useEffect(() => {
+        getEmployees();
+        getSchedules();
+      }, []);
+
 
 
     const getEmployees = () => {
@@ -61,6 +83,16 @@ function Admin() {
           });
       };
 
+      const deleteEmployee = (id) => {
+        Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
+          setEmployeeList(
+            employeeList.filter((val) => {
+              return val.id != id;
+            })
+          );
+        });
+      };
+
       useEffect(() => {
         getEmployees();
         getSchedules();
@@ -91,7 +123,74 @@ function Admin() {
             <span>Week {format(weekStart, "MM/dd/yyyy")} - {format(weekEnd, "MM/dd/yyyy")}</span>
             <button onClick={handleForwardArrowClick}>Forward</button>
           </div>
-        
+            
+          <div className="Information">
+      <main>
+        <button className='registerButton' onClick={() => setButtonPopup(true)}>Add Employee</button>
+        </main>
+        <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+        <label>Full Name:</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
+        />
+        <label>Position:</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setPosition(e.target.value);
+          }}
+        />
+        <label>Phone #:</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setPhonenumber(e.target.value);
+          }}
+        />
+        <label htmlFor="department">Department:</label>
+        <select id="department" onChange={(e) => {
+        setDepartment(e.target.value);
+          }}>
+        <option value="0"></option>
+        <option value="1">Nursing</option>
+        <option value="2">Bookeeping</option>
+        <option value="3">HR</option>
+        </select>
+        <label>Username</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setUsernameReg(e.target.value);
+          }}
+        />
+        <label>Password</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setPasswordReg(e.target.value);
+          }}
+        />
+        <label htmlFor="department">Role:</label>
+        <select id="department" onChange={(e) => {
+        setDepartment(e.target.value);
+          }}>
+        <option value="0"></option>
+        <option value="1">Admin</option>
+        <option value="2">Supervisor</option>
+        <option value="3">Employee</option>
+        </select>
+        <button onClick={addEmployee}>Add Employee</button>
+   
+    
+    </Popup>
+    
+  
+
+    </div>
+
           <div>
             <h1>Weekly Schedule</h1>
             <table>
@@ -172,6 +271,14 @@ function Admin() {
 
               Update
             </button>
+
+            <button
+                  onClick={() => {
+                    deleteEmployee(employee.id_employees);
+                  }}
+                >
+                  Delete
+                </button>
          
         
       </td>
