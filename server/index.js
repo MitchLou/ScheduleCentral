@@ -178,6 +178,45 @@ app.put("/update", (req, res) => {
   );
 });
 
+
+app.put("/role", (req, res) => {
+  const id = req.body.id;
+  const role = req.body.role;
+  
+  db.query(
+    "SELECT login_ID FROM all_employees WHERE id_employees = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Error retrieving login ID");
+      } else if (result.length === 0) {
+        res.status(404).send("Employee not found");
+      } else {
+        // Get the login ID for the employee
+        const login_id = result[0].login_ID;
+          
+        // Update the role of the login
+        db.query(
+          "UPDATE login_info SET role = ? WHERE login_id = ?", 
+          [role, login_id], 
+          (err, result) => {
+            if (err) {
+              console.log(err);
+              res.status(500).send("Error updating role");
+            } else {
+              res.send("Role updated successfully");
+            }
+          }
+        );
+      }
+    }
+  );
+});
+
+
+
+
 app.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
   db.query(
@@ -197,7 +236,6 @@ app.delete("/delete/:id", (req, res) => {
       
       // Get the login ID for the employee from the schedules table
       const login_id = result[0].login_ID;
-      console.log(login_id);
       
       // Delete employee from schedules table
       db.query(

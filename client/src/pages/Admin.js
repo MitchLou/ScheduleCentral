@@ -85,6 +85,21 @@ function Admin() {
           });
       };
 
+      const updateRole = (id) => {
+        Axios.put("http://localhost:3001/role", {
+          role: role,
+          id: id,
+        })
+          .then((response) => {
+            alert("Updated successfully!");
+            getSchedules();
+          })
+          .catch((error) => {
+            alert("Error occurred while updating the employee's role.");
+            console.log(error);
+          });
+      };
+
       const deleteEmployee = (id) => {
         Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
           setEmployeeList(
@@ -293,6 +308,24 @@ function Admin() {
                   }}
                 >
                   Delete Employee
+                </button>
+                
+                <label htmlFor="UpdateRole">Role:</label>
+                <select id="UpdateRole" onChange={(e) => {
+                  setRole(e.target.value);
+                   }}>
+        <option value="0"></option>
+        <option value="admin">Admin</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="employee">Employee</option>
+        </select>
+
+        <button
+                  onClick={() => {
+                    updateRole(selectedEmployeeId);
+                  }}
+                >
+                  Update Role
                 </button>
 
                 </Popup>
