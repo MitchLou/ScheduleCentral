@@ -10,6 +10,8 @@ function Supervisor() {
     const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), {weekStartsOn: 0}));
     const [weekEnd, setWeekEnd] = useState(endOfWeek(new Date(), {weekEndsOn: 6}));
     const [updatePopup, setupdatePopup] = useState(false);
+    const [updatebuttonPopup, setUpdateButtonPopup] = useState(false);
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState(0);
 
 
     const [workDate, setWorkDate] = useState(new Date());
@@ -153,7 +155,20 @@ function Supervisor() {
         </td>
       ))}
       <td>
+      <div className="Information">
+      <main>
         
+      <button className='registerButton' onClick={() => {
+  setSelectedEmployeeId(employee.id_employees);
+  setUpdateButtonPopup(true);
+}}>
+  Update
+</button>
+
+        </main>
+        
+        <Popup trigger={updatebuttonPopup} setTrigger={setUpdateButtonPopup} employeeId={selectedEmployeeId}>
+            
             <input
               type="date"
               placeholder="2000..."
@@ -165,25 +180,40 @@ function Supervisor() {
               type="text"
               placeholder="Work Start..."
               onChange={(event) => {
-                setWorkStart(event.target.value);
-              }}
-            />
+              const value = event.target.value;
+            if (value === "") {
+              setWorkStart("");
+          } else {
+              setWorkStart(value);
+          }
+          }}
+          />
             <input
               type="text"
               placeholder="Work End..."
               onChange={(event) => {
-                setWorkEnd(event.target.value);
-              }}
-            />
+              const value = event.target.value;
+            if (value === "") {
+              setWorkEnd("");
+          } else {
+              setWorkEnd(value);
+          }
+          }}
+          />
             <button
               onClick={() => {
-                console.log(employee.id_employees);
-                updateEmployee(employee.id_employees);
+                updateEmployee(selectedEmployeeId);
               }}
             >
 
               Update
             </button>
+
+                </Popup>
+    
+  
+
+    </div>
          
         
       </td>
