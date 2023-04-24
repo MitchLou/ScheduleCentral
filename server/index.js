@@ -180,14 +180,69 @@ app.put("/update", (req, res) => {
 
 app.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
-  db.query("DELETE FROM employees WHERE id = ?", id, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+  db.query(
+    "SELECT login_ID FROM all_employees WHERE id_employees = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Error finding login ID for employee");
+        return;
+      } 
+      
+      if (result.length === 0) {
+        res.status(404).send("Employee not found in schedules");
+        return;
+      }
+      
+      // Get the login ID for the employee from the schedules table
+      const login_id = result[0].login_ID;
+      console.log(login_id);
+      
+      // Delete employee from schedules table
+      db.query(
+        "DELETE FROM schedules WHERE employee_ID = ?", 
+        [id], 
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(500).send("Error deleting employee from schedules");
+            return;
+          } 
+          
+          // Delete employee from all_employees table
+          db.query(
+            "DELETE FROM all_employees WHERE id_employees = ?", 
+            [id], 
+            (err, result) => {
+              if (err) {
+                console.log(err);
+                res.status(500).send("Error deleting employee from all_employees");
+                return;
+              } 
+              
+              // Delete employee's login info
+              db.query(
+                "DELETE FROM login_info WHERE login_id = ?", 
+                [login_id], 
+                (err, result) => {
+                  if (err) {
+                    console.log(err);
+                    res.status(500).send("Error deleting employee's login info");
+                    return;
+                  } 
+                  
+                  res.send("Employee deleted successfully");
+                }
+              );
+            }
+          );
+        }
+      );
     }
-  });
+  );
 });
+
 
 app.get("/department/:id", (req, res) => {
   const login_id = req.params.id;

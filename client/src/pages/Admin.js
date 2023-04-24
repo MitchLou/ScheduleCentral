@@ -14,6 +14,8 @@ function Admin() {
     const [usernameReg, setUsernameReg] = useState("");
     const [passwordReg, setPasswordReg] = useState("");
     const [buttonPopup, setButtonPopup] = useState(false);
+    const [updatebuttonPopup, setUpdateButtonPopup] = useState(false);
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState(0);
 
 
     const [workDate, setWorkDate] = useState(new Date());
@@ -87,6 +89,7 @@ function Admin() {
         Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
           setEmployeeList(
             employeeList.filter((val) => {
+              console.log(response);
               return val.id != id;
             })
           );
@@ -173,14 +176,14 @@ function Admin() {
             setPasswordReg(e.target.value);
           }}
         />
-        <label htmlFor="department">Role:</label>
-        <select id="department" onChange={(e) => {
-        setDepartment(e.target.value);
+        <label htmlFor="Role">Role:</label>
+        <select id="Role" onChange={(e) => {
+        setRole(e.target.value);
           }}>
         <option value="0"></option>
-        <option value="1">Admin</option>
-        <option value="2">Supervisor</option>
-        <option value="3">Employee</option>
+        <option value="admin">Admin</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="employee">Employee</option>
         </select>
         <button onClick={addEmployee}>Add Employee</button>
    
@@ -212,7 +215,7 @@ function Admin() {
     
     <tr key={rowIndex}>
       <td>{employee.name}</td>
-      {[
+      {[ 
         { isDay: isSunday, label: "Sun" },
         { isDay: isMonday, label: "Mon" },
         { isDay: isTuesday, label: "Tue" },
@@ -240,7 +243,20 @@ function Admin() {
         </td>
       ))}
       <td>
+      <div className="Information">
+      <main>
         
+      <button className='registerButton' onClick={() => {
+  setSelectedEmployeeId(employee.id_employees);
+  setUpdateButtonPopup(true);
+}}>
+  Update
+</button>
+
+        </main>
+        
+        <Popup trigger={updatebuttonPopup} setTrigger={setUpdateButtonPopup} employeeId={selectedEmployeeId}>
+            
             <input
               type="date"
               placeholder="2000..."
@@ -264,8 +280,7 @@ function Admin() {
             />
             <button
               onClick={() => {
-                console.log(employee.id_employees);
-                updateEmployee(employee.id_employees);
+                updateEmployee(selectedEmployeeId);
               }}
             >
 
@@ -274,11 +289,17 @@ function Admin() {
 
             <button
                   onClick={() => {
-                    deleteEmployee(employee.id_employees);
+                    deleteEmployee(selectedEmployeeId);
                   }}
                 >
-                  Delete
+                  Delete Employee
                 </button>
+
+                </Popup>
+    
+  
+
+    </div>
          
         
       </td>
