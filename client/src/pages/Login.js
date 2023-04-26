@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import Popup from './Popup';
 
 
-
 function Login() {
     let navigate = useNavigate();
 
@@ -159,8 +158,6 @@ function Login() {
    
     
     </Popup>
-    
-  
 
     </div>
 
