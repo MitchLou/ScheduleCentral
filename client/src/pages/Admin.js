@@ -168,7 +168,7 @@ function Admin() {
   };
 
   return (
-    <div className="Attributes">
+    <div className="Container">
       <div>
         <button onClick={logOut}>logout</button>
       </div>
@@ -256,142 +256,160 @@ function Admin() {
 
       <div>
         <h1>Weekly Schedule</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Sunday</th>
-              <th>Monday</th>
-              <th>Tuesday</th>
-              <th>Wednesday</th>
-              <th>Thursday</th>
-              <th>Friday</th>
-              <th>Saturday</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Render rows for each employee of the week */}
-            {employeeList.map((employee, rowIndex) => (
-              <tr key={rowIndex}>
-                <td>{employee.name}</td>
-                {[
-                  { isDay: isSunday, label: "Sun" },
-                  { isDay: isMonday, label: "Mon" },
-                  { isDay: isTuesday, label: "Tue" },
-                  { isDay: isWednesday, label: "Wed" },
-                  { isDay: isThursday, label: "Thu" },
-                  { isDay: isFriday, label: "Fri" },
-                  { isDay: isSaturday, label: "Sat" },
-                ].map(({ isDay, label }, columnIndex) => (
-                  <td key={columnIndex}>
-                    {scheduleList.map((schedule, cellIndex) => {
-                      if (
-                        employee.id_employees === schedule.employee_ID &&
-                        isSameWeek(new Date(schedule.work_date), weekEnd) &&
-                        isDay(new Date(schedule.work_date))
-                      ) {
-                        return (
-                          <div key={cellIndex}>
-                            {schedule.start_work_hour}-{schedule.end_work_hour}
-                          </div>
-                        );
-                      } else {
-                        return null;
-                      }
-                    })}
-                  </td>
-                ))}
-                <td>
-                  <div className="Information">
-                    <main>
-                      <button
-                        className="registerButton"
-                        onClick={() => {
-                          setSelectedEmployeeId(employee.id_employees);
-                          setUpdateButtonPopup(true);
-                        }}
-                      >
-                        Update
-                      </button>
-                    </main>
+        <div class="row">
+          <div class="col-md-12">
+            <div className="schedule-table">
+              <table className="table bg-white">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Sunday</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th className="last">Saturday</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Render rows for each employee of the week */}
+                  {employeeList.map((employee, rowIndex) => (
+                    <tr key={rowIndex}>
+                      <td className="day">{employee.name}</td>
+                      {[
+                        { isDay: isSunday, label: "Sun" },
+                        { isDay: isMonday, label: "Mon" },
+                        { isDay: isTuesday, label: "Tue" },
+                        { isDay: isWednesday, label: "Wed" },
+                        { isDay: isThursday, label: "Thu" },
+                        { isDay: isFriday, label: "Fri" },
+                        { isDay: isSaturday, label: "Sat" },
+                      ].map(({ isDay, label }, columnIndex) => (
+                        <td className="active" key={columnIndex}>
+                          {scheduleList.map((schedule, cellIndex) => {
+                            if (
+                              employee.id_employees === schedule.employee_ID &&
+                              isSameWeek(
+                                new Date(schedule.work_date),
+                                weekEnd
+                              ) &&
+                              isDay(new Date(schedule.work_date))
+                            ) {
+                              return (
+                                <div key={cellIndex}>
+                                  <h4>
+                                    {schedule.start_work_hour}-
+                                    {schedule.end_work_hour}
+                                  </h4>
+                                  <div class="hover">
+                                    <h4>{employee.phone_number}</h4>
+                                    <p>{schedule.start_work_hour}-
+                                    {schedule.end_work_hour}</p>
+                                    <span></span>
+                                  </div>
+                                </div>
+                              );
+                            } else {
+                              return null;
+                            }
+                          })}
+                        </td>
+                      ))}
+                      <td>
+                        <div className="Information">
+                          <main>
+                            <button
+                              className="registerButton"
+                              onClick={() => {
+                                setSelectedEmployeeId(employee.id_employees);
+                                setUpdateButtonPopup(true);
+                              }}
+                            >
+                              Update
+                            </button>
+                          </main>
 
-                    <Popup
-                      trigger={updatebuttonPopup}
-                      setTrigger={setUpdateButtonPopup}
-                      employeeId={selectedEmployeeId}
-                    >
-                      <input
-                        type="date"
-                        placeholder="2000..."
-                        onChange={(event) => {
-                          setWorkDate(event.target.value);
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Work Start..."
-                        onChange={(event) => {
-                          setWorkStart(event.target.value);
-                        }}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Work End..."
-                        onChange={(event) => {
-                          setWorkEnd(event.target.value);
-                        }}
-                      />
-                      <button
-                        onClick={() => {
-                          updateEmployee(selectedEmployeeId);
-                        }}
-                      >
-                        Update
-                      </button>
+                          <Popup
+                            trigger={updatebuttonPopup}
+                            setTrigger={setUpdateButtonPopup}
+                            employeeId={selectedEmployeeId}
+                          >
+                            <input
+                              type="date"
+                              placeholder="2000..."
+                              onChange={(event) => {
+                                setWorkDate(event.target.value);
+                              }}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Work Start..."
+                              onChange={(event) => {
+                                setWorkStart(event.target.value);
+                              }}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Work End..."
+                              onChange={(event) => {
+                                setWorkEnd(event.target.value);
+                              }}
+                            />
+                            <button
+                              onClick={() => {
+                                updateEmployee(selectedEmployeeId);
+                              }}
+                            >
+                              Update
+                            </button>
 
-                      <button
-                        onClick={() => {
-                          deleteEmployee(selectedEmployeeId);
-                        }}
-                      >
-                        Delete Employee
-                      </button>
+                            <button
+                              onClick={() => {
+                                deleteEmployee(selectedEmployeeId);
+                              }}
+                            >
+                              Delete Employee
+                            </button>
 
-                      <label htmlFor="UpdateRole">Role:</label>
-                      <select
-                        id="UpdateRole"
-                        onChange={(e) => {
-                          setRole(e.target.value);
-                        }}
-                      >
-                        <option value="0"></option>
-                        <option value="admin">Admin</option>
-                        <option value="supervisor">Supervisor</option>
-                        <option value="employee">Employee</option>
-                      </select>
+                            <label htmlFor="UpdateRole">Role:</label>
+                            <select
+                              id="UpdateRole"
+                              onChange={(e) => {
+                                setRole(e.target.value);
+                              }}
+                            >
+                              <option value="0"></option>
+                              <option value="admin">Admin</option>
+                              <option value="supervisor">Supervisor</option>
+                              <option value="employee">Employee</option>
+                            </select>
 
-                      <button
-                        onClick={() => {
-                          updateRole(selectedEmployeeId);
-                        }}
-                      >
-                        Update Role
-                      </button>
+                            <button
+                              onClick={() => {
+                                updateRole(selectedEmployeeId);
+                              }}
+                            >
+                              Update Role
+                            </button>
 
-                      <button
-                        onClick={() => {
-                          deleteDate(selectedEmployeeId, workDate);
-                        }}
-                      >
-                        Delete Shift
-                      </button>
-                    </Popup>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                            <button
+                              onClick={() => {
+                                deleteDate(selectedEmployeeId, workDate);
+                              }}
+                            >
+                              Delete Shift
+                            </button>
+                          </Popup>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
