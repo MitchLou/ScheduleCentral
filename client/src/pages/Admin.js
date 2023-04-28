@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import "./Admin.css";
 import { useNavigate } from "react-router-dom";
+
 import Popup from "./Popup";
 import {
   addDays,
@@ -169,6 +170,9 @@ function Admin() {
 
   return (
     <div className="Container">
+      <div className="header">
+      <h1>Schedule Central</h1>
+      </div>
       <div>
         <button onClick={logOut}>logout</button>
       </div>
@@ -181,16 +185,18 @@ function Admin() {
         <button onClick={handleForwardArrowClick}>Forward</button>
       </div>
 
-      <div className="Information">
+      <div className="EmployeeInfo">
         <main>
           <button
-            className="registerButton"
+            className="addEmployee"
             onClick={() => setButtonPopup(true)}
           >
             Add Employee
           </button>
         </main>
+        
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+       
           <label>Full Name:</label>
           <input
             type="text"
@@ -251,11 +257,13 @@ function Admin() {
             <option value="employee">Employee</option>
           </select>
           <button onClick={addEmployee}>Add Employee</button>
+
         </Popup>
+        
       </div>
 
       <div>
-        <h1>Weekly Schedule</h1>
+        <h2>Employee Schedules</h2>
         <div class="row">
           <div class="col-md-12">
             <div className="schedule-table">
@@ -276,7 +284,9 @@ function Admin() {
                   {/* Render rows for each employee of the week */}
                   {employeeList.map((employee, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="day">{employee.name}</td>
+                      <td className="day">
+                        {employee.name}
+                      </td>
                       {[
                         { isDay: isSunday, label: "Sun" },
                         { isDay: isMonday, label: "Mon" },
@@ -302,11 +312,13 @@ function Admin() {
                                     {schedule.start_work_hour}-
                                     {schedule.end_work_hour}
                                   </h4>
-                                  <div class="hover">
-                                    <h4>{employee.phone_number}</h4>
-                                    <p>{schedule.start_work_hour}-
-                                    {schedule.end_work_hour}</p>
-                                    <span></span>
+                                  <div class="hover">                       
+                                    <h4>{schedule.start_work_hour}-
+                                    {schedule.end_work_hour}</h4>
+                                    <p>{employee.department} - {employee.position}</p>
+                                    
+                                    <span>{employee.name}</span>
+                              
                                   </div>
                                 </div>
                               );
@@ -316,7 +328,7 @@ function Admin() {
                           })}
                         </td>
                       ))}
-                      <td>
+                      
                         <div className="Information">
                           <main>
                             <button
@@ -401,8 +413,17 @@ function Admin() {
                               Delete Shift
                             </button>
                           </Popup>
+
+                          <button
+                              onClick={() => {
+                                deleteEmployee(selectedEmployeeId);
+                              }}
+                            >
+                              Delete Employee
+                            </button>
+                          
                         </div>
-                      </td>
+                      
                     </tr>
                   ))}
                 </tbody>

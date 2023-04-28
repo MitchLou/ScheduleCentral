@@ -22,8 +22,9 @@
 }
 
 #signIn {
-    color:rgba(182, 182, 182, 0.559);
+    color: white;
     margin-bottom: 10px;
+    
 }
 
 .login{
@@ -51,6 +52,7 @@
     margin-left: auto;
     margin-right: auto;
     width: 40%;
+    color: blue;
 }
 
 
@@ -69,6 +71,7 @@
     border-left: none;
     border-right: none;
     border-bottom: 2px solid black;
+    color: white;
     
 }
 
@@ -115,6 +118,8 @@ a:link {
     border-left: none;
     border-right: none;
     border-bottom: 2px solid black;
+    color: white;
+
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -169,38 +174,6 @@ input.empty {
     transition: 0.5s;
 }
 
-.popup{
-    position:fixed;
-    top: 0;
-    left:0;
-    width:100%;
-    height:100vh;
-    background-color:rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    color: black;
-}
-
-.popup-inner{
-    position: relative;
-    padding-right: 250px;
-    padding-left: 250px;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    width: 100%;
-    max-width: 640px;
-    background-color: #fcfafa;
-    color: Black;
-    
-}
-
-.popup-inner .close-btn{
-    position: absolute;
-    top: 16px;
-    right: 16px;
-}
   
   select {
     display: block;

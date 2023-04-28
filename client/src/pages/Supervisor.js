@@ -168,7 +168,7 @@ function Supervisor() {
           <tbody>
             {/* Render rows for each employee of the week */}
             {employeeList.map((employee, rowIndex) =>
-              employee.department_ID === department[0]?.department_ID ? (
+              employee.department === department[0]?.department ? (
                 <tr key={rowIndex}>
                   <td>{employee.name}</td>
                   {[

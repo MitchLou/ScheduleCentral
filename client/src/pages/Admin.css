@@ -180,6 +180,32 @@ min-width: 135px;
 }
 }
 
+.header {
+  background-color: #f1f1f1;
+  padding: 20px;
+  text-align: center;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+
+
+  
+  select {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: #0077ff;
+    box-shadow: 0 0 0 0.125rem rgba(0, 119, 255, 0.25);
+  }
+
 
 
 

@@ -293,7 +293,7 @@ app.get("/department/:id", (req, res) => {
   const login_id = req.params.id;
 
   db.query(
-    "SELECT department_ID FROM all_employees WHERE login_ID = ?",
+    "SELECT department FROM all_employees WHERE login_ID = ?",
     [login_id],
     (err, result) => {
       if (err) {
