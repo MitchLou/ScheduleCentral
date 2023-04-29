@@ -197,3 +197,80 @@ input.empty {
     margin-top: 15px;
     font-size: 16px;
   }
+
+  .popup-buttons {
+    transition-duration: 0.4s;
+    padding: 8px 20px;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .buttonsHover:hover {
+    background-color: #8693d328;
+    color: #86d4f5;
+  }
+
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .register-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: arial;
+  }
+  
+  .register-form input[type="text"],
+  .register-form select {
+    padding: 8px;
+  border-radius: 5px;
+  border: 2px solid black;
+  font-size: 16px;
+  outline: none;
+  margin-left: auto;
+  margin-right: auto;
+  
+    margin-bottom: 10px;
+  }
+  
+  
+  .register-form button {
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 8px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 10px;;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    border: 2px solid black;
+    font-weight: bold;
+  }
+  
+  .register-form button:hover {
+    background-color: #0069d9;
+  }
+  
+  .popup-buttons:hover {
+    background-color: #0069d9;
+  }
+  
+  .buttonsHover {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .buttonsHover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  

@@ -106,48 +106,61 @@ function Login() {
             </button>
           </main>
           <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-            <label>Full Name:</label>
-            <input
-              type="text"
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
-            <label>Position:</label>
-            <input
-              type="text"
-              onChange={(e) => {
-                setPosition(e.target.value);
-              }}
-            />
+          <form class="register-form">
+  <label for="fullname">Full Name:</label>
+  <input
+    type="text"
+    id="fullname"
+    onChange={(e) => {
+      setName(e.target.value);
+    }}
+  />
+  <label for="position">Position:</label>
+  <input
+    type="text"
+    id="position"
+    onChange={(e) => {
+      setPosition(e.target.value);
+    }}
+  />
 
-            <label htmlFor="department">Department:</label>
-            <select
-              id="department"
-              onChange={(e) => {
-                setDepartment(e.target.value);
-              }}
-            >
-              <option value="0"></option>
-              <option value="Nursing">Nursing</option>
-              <option value="Bookeeping">Bookeeping</option>
-              <option value="HR">HR</option>
-            </select>
-            <label>Username</label>
-            <input
-              type="text"
-              onChange={(e) => {
-                setUsernameReg(e.target.value);
-              }}
-            />
-            <label>Password</label>
-            <input
-              type="text"
-              onChange={(e) => {
-                setPasswordReg(e.target.value);
-              }}
-            />
-            <button onClick={register}> Register </button>
+  <label for="department">Department:</label>
+  <select
+    type = 'text'
+    id="department"
+    onChange={(e) => {
+      setDepartment(e.target.value);
+    }}
+  >
+    <option value="0"></option>
+    <option value="Nursing">Nursing</option>
+    <option value="Bookeeping">Bookeeping</option>
+    <option value="HR">HR</option>
+  </select>
+
+  <label for="username">Username</label>
+  <input
+    type="text"
+    id="username"
+    onChange={(e) => {
+      setUsernameReg(e.target.value);
+    }}
+  />
+
+  <label for="password">Password</label>
+  <input
+    type="text"
+    id="password"
+    onChange={(e) => {
+      setPasswordReg(e.target.value);
+    }}
+  />
+
+  <button onClick={register} class="popup-buttons buttonsHover">
+    Register
+  </button>
+</form>
+
           </Popup>
         </div>
       </div>

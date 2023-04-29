@@ -260,6 +260,9 @@ function Supervisor() {
                             setTrigger={setUpdateButtonPopup}
                             employeeId={selectedEmployeeId}
                           >
+                            <label class = "popup-headers">Availability</label>
+                            <br/>
+                            <label>Date:</label>
                             <input
                               type="date"
                               placeholder="2000..."

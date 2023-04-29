@@ -83,7 +83,9 @@ function Employee() {
 
   const deleteNotifications = (id) => {
     Axios.delete(`http://localhost:3001/deletenoti/${id}`).then(
-      (response) => {}
+      (response) => {
+        getNotifications();
+      }
     );
   };
 
@@ -113,14 +115,15 @@ function Employee() {
       </div>
 
       <div className="container">
-        <button
-          className="registerButton"
+
+      <img
+          src={require("./icons8-notifications-64.png")}
+          alt="buttonimage"
+          className="notipopupButton"
           onClick={() => {
             setButtonPopup(true);
           }}
-        >
-          Notifications
-        </button>
+        />
 
         <div className="week-picker">
           <button className="arrow-button" onClick={handleBackwardArrowClick}>
@@ -149,31 +152,33 @@ function Employee() {
           <div>
             {notificationList.filter(
               (notification) =>
-                notification.employee_ID === employeeID.id_employees
+                notification.employee_ID === employeeID[0]?.id_employees
             ).length > 0 ? (
               <div>
-                <h1>You have notifications</h1>
                 <ul>
                   {notificationList.map((notification, index) =>
-                    notification.employee_ID === employeeID.id_employees ? (
+                    notification.employee_ID === employeeID[0].id_employees ? (
                       <li key={index}>
-                        {notification.message} ({notification.date})
+                        <span className="notification-message">
+                          {notification.message} ({notification.date})
+                        </span>
                       </li>
                     ) : null
                   )}
                 </ul>
 
                 <button
+                  className="delete-notifications-button"
                   onClick={() => {
-                    deleteNotifications(employeeID.id_employees);
+                    deleteNotifications(employeeID[0]?.id_employees);
                   }}
                 >
-                  Delete Notifications
+                  Delete All Notifications
                 </button>
               </div>
             ) : (
               <div>
-                <h1>No notifications</h1>
+                <h1>No Notifications</h1>
               </div>
             )}
           </div>

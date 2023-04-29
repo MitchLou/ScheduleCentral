@@ -197,3 +197,26 @@ body {
     font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
     font-size: 2.5rem;
   }
+
+  .popup-headers {
+    color: rgb(20, 0, 0);
+    font-size: 20px;
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    text-decoration: underline;
+  }
+  
+  .popup-buttons {
+    transition-duration: 0.4s;
+    padding: 8px 20px;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .buttonsHover:hover {
+    background-color: #0029f828;
+    color: #86d4f5;
+  }

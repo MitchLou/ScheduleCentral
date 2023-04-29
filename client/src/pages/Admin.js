@@ -170,7 +170,7 @@ function Admin() {
   };
 
   return (
-    <div className="Container">
+    <div className="Attributes">
       <div className="header">
         <img className="pagelogo" src={require("./logo1116v2.png")} />
         <h1>Employee Schedules</h1>
@@ -181,24 +181,28 @@ function Admin() {
 
       <div className="EmployeeInfo">
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-          <label>Full Name:</label>
+          <label className="form-label">Full Name:</label>
           <input
+            className="form-input"
             type="text"
             onChange={(e) => {
               setName(e.target.value);
             }}
           />
-          <label>Position:</label>
+          <label className="form-label">Position:</label>
           <input
+            className="form-input"
             type="text"
             onChange={(e) => {
               setPosition(e.target.value);
             }}
           />
 
-          <label htmlFor="department">Department:</label>
+          <label className="form-label" htmlFor="department">
+            Department:
+          </label>
           <select
-            id="department"
+            id="role"
             onChange={(e) => {
               setDepartment(e.target.value);
             }}
@@ -208,21 +212,27 @@ function Admin() {
             <option value="Bookeeping">Bookeeping</option>
             <option value="HR">HR</option>
           </select>
-          <label>Username</label>
+            <br />
+          <label className="form-label">Username</label>
           <input
+            className="form-input"
             type="text"
             onChange={(e) => {
               setUsernameReg(e.target.value);
             }}
           />
-          <label>Password</label>
+          <label className="form-label">Password</label>
           <input
+            className="form-input"
             type="text"
             onChange={(e) => {
               setPasswordReg(e.target.value);
             }}
           />
-          <label htmlFor="Role">Role:</label>
+
+          <label className="form-label" htmlFor="Role">
+            Role:
+          </label>
           <select
             id="Role"
             onChange={(e) => {
@@ -234,7 +244,10 @@ function Admin() {
             <option value="supervisor">Supervisor</option>
             <option value="employee">Employee</option>
           </select>
-          <button onClick={addEmployee}>Add Employee</button>
+
+          <button className="form-submit" onClick={addEmployee}>
+            Add Employee
+          </button>
         </Popup>
       </div>
 
@@ -257,7 +270,7 @@ function Admin() {
               {format(weekEnd, "MM/dd/yyyy")}
             </span>
             <button className="arrow-button" onClick={handleForwardArrowClick}>
-            <img
+              <img
                 src={require("./icons8-right-64.png")}
                 alt="Button Image"
                 className="forward-arrow"
@@ -358,7 +371,7 @@ function Admin() {
                               Availability
                             </label>
                             <br />
-                            <label>Date: </label>
+                            <label className="form-label">Date: </label>
                             <input
                               type="date"
                               placeholder="2000..."
@@ -366,7 +379,7 @@ function Admin() {
                                 setWorkDate(event.target.value);
                               }}
                             />
-                            <label>Starting Time: </label>
+                            <label className="form-label">Starting Time: </label>
                             <input
                               type="time"
                               placeholder="Work Start..."
@@ -383,7 +396,7 @@ function Admin() {
                                 setWorkStart(workStart);
                               }}
                             />
-                            <label>Ending Time: </label>
+                            <label className="form-label">Ending Time: </label>
                             <input
                               type="time"
                               placeholder="Work End..."
