@@ -40,7 +40,6 @@ function Login() {
       password: password,
     })
       .then((response) => {
-        console.log(response);
         if (response.data.message) {
           setLoginStatus(response.data.message);
         } else {

@@ -178,8 +178,6 @@ function Admin() {
           <button onClick={logOut}>LOG OUT</button>
         </div>
       </div>
-      
-
 
       <div className="EmployeeInfo">
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
@@ -248,18 +246,25 @@ function Admin() {
 
           <div className="week-picker">
             <button className="arrow-button" onClick={handleBackwardArrowClick}>
-              Backward
+              <img
+                src={require("./icons8-left-64.png")}
+                alt="Button Image"
+                className="backward-arrow"
+              />
             </button>
             <span className="week-span">
               Week {format(weekStart, "MM/dd/yyyy")} -{" "}
               {format(weekEnd, "MM/dd/yyyy")}
             </span>
             <button className="arrow-button" onClick={handleForwardArrowClick}>
-              Forward
+            <img
+                src={require("./icons8-right-64.png")}
+                alt="Button Image"
+                className="forward-arrow"
+              />
             </button>
           </div>
         </div>
-
 
         <div className="row">
           <div className="col-md-12">

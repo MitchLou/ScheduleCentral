@@ -222,7 +222,6 @@ body {
 .pagelogo {
   height: 70px; /* set the height of the logo */
   margin-right: 10px; /* add a small margin to the right of the logo */
-  background-color: ;
 }
 
 .popup-headers {
@@ -336,9 +335,9 @@ select#UpdateRole {
 }
 
 .arrow-button {
-  background-color: #4CAF50; /* Green */
+  background-color: #0aee12; /* Green */
   border: none;
-  color: white;
+  color: #4CAF50;
   padding: 10px 10px;
   text-align: center;
   text-decoration: none;
@@ -353,6 +352,15 @@ select#UpdateRole {
   margin-left: 10px;
   margin-right: 10px;
 }
+
+
+.backward-arrow, .forward-arrow {
+  width: 29px;
+  height: 29px;
+}
+
+
+
 
 
 

@@ -104,30 +104,47 @@ function Employee() {
 
   return (
     <div className="Attributes">
-      <div>
-        <button onClick={logOut}>Logout</button>
+      <div className="header">
+        <img className="pagelogo" src={require("./logo1116v2.png")} />
+        <h1>My Schedule</h1>
+        <div className="logout">
+          <button onClick={logOut}>LOG OUT</button>
+        </div>
       </div>
-      <div>
-        <button onClick={handleBackwardArrowClick}>Backward</button>
-        <span>
-          Week {format(weekStart, "MM/dd/yyyy")} -{" "}
-          {format(weekEnd, "MM/dd/yyyy")}
-        </span>
-        <button onClick={handleForwardArrowClick}>Forward</button>
+
+      <div className="container">
+        <button
+          className="registerButton"
+          onClick={() => {
+            setButtonPopup(true);
+          }}
+        >
+          Notifications
+        </button>
+
+        <div className="week-picker">
+          <button className="arrow-button" onClick={handleBackwardArrowClick}>
+            <img
+              src={require("./icons8-left-64.png")}
+              alt="Button Image"
+              className="backward-arrow"
+            />
+          </button>
+          <span className="week-span">
+            Week {format(weekStart, "MM/dd/yyyy")} -{" "}
+            {format(weekEnd, "MM/dd/yyyy")}
+          </span>
+          <button className="arrow-button" onClick={handleForwardArrowClick}>
+            <img
+              src={require("./icons8-right-64.png")}
+              alt="Button Image"
+              className="forward-arrow"
+            />
+          </button>
+        </div>
       </div>
 
       <div className="Information">
-        <main>
-          <button
-            className="registerButton"
-            onClick={() => {
-              setButtonPopup(true);
-            }}
-          >
-            Notifications
-          </button>
-        </main>
-
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
           <div>
             {notificationList.filter(
@@ -163,60 +180,80 @@ function Employee() {
         </Popup>
       </div>
 
-      <div>
-        <h1>Weekly Schedule</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Sunday</th>
-              <th>Monday</th>
-              <th>Tuesday</th>
-              <th>Wednesday</th>
-              <th>Thursday</th>
-              <th>Friday</th>
-              <th>Saturday</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Render rows for each employee of the week */}
-            {employeeList.map((employee, rowIndex) =>
-              employee.login_ID === loginInfo ? (
-                <tr key={rowIndex}>
-                  <td>{employee.name}</td>
-                  {[
-                    { isDay: isSunday, label: "Sun" },
-                    { isDay: isMonday, label: "Mon" },
-                    { isDay: isTuesday, label: "Tue" },
-                    { isDay: isWednesday, label: "Wed" },
-                    { isDay: isThursday, label: "Thu" },
-                    { isDay: isFriday, label: "Fri" },
-                    { isDay: isSaturday, label: "Sat" },
-                  ].map(({ isDay, label }, columnIndex) => (
-                    <td key={columnIndex}>
-                      {scheduleList.map((schedule, cellIndex) => {
-                        if (
-                          employee.id_employees === schedule.employee_ID &&
-                          isSameWeek(new Date(schedule.work_date), weekEnd) &&
-                          isDay(new Date(schedule.work_date))
-                        ) {
-                          return (
-                            <div key={cellIndex}>
-                              {schedule.start_work_hour}-
-                              {schedule.end_work_hour}
-                            </div>
-                          );
-                        } else {
-                          return null;
-                        }
-                      })}
-                    </td>
-                  ))}
+      <div className="row">
+        <div className="col-md-12">
+          <div className="schedule-table">
+            <table className="table bg-white">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Sunday</th>
+                  <th>Monday</th>
+                  <th>Tuesday</th>
+                  <th>Wednesday</th>
+                  <th>Thursday</th>
+                  <th>Friday</th>
+                  <th className="last">Saturday</th>
                 </tr>
-              ) : null
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {/* Render rows for each employee of the week */}
+                {employeeList.map((employee, rowIndex) =>
+                  employee.login_ID === loginInfo ? (
+                    <tr key={rowIndex}>
+                      <td className="day">{employee.name}</td>
+                      {[
+                        { isDay: isSunday, label: "Sun" },
+                        { isDay: isMonday, label: "Mon" },
+                        { isDay: isTuesday, label: "Tue" },
+                        { isDay: isWednesday, label: "Wed" },
+                        { isDay: isThursday, label: "Thu" },
+                        { isDay: isFriday, label: "Fri" },
+                        { isDay: isSaturday, label: "Sat" },
+                      ].map(({ isDay, label }, columnIndex) => (
+                        <td className="active" key={columnIndex}>
+                          {scheduleList.map((schedule, cellIndex) => {
+                            if (
+                              employee.id_employees === schedule.employee_ID &&
+                              isSameWeek(
+                                new Date(schedule.work_date),
+                                weekEnd
+                              ) &&
+                              isDay(new Date(schedule.work_date))
+                            ) {
+                              return (
+                                <div key={cellIndex}>
+                                  <h4>
+                                    {schedule.start_work_hour}-
+                                    {schedule.end_work_hour}
+                                  </h4>
+                                  <div className="hover">
+                                    <h4>
+                                      {schedule.start_work_hour}-
+                                      {schedule.end_work_hour}
+                                    </h4>
+                                    <p>
+                                      {employee.department} -{" "}
+                                      {employee.position}
+                                    </p>
+
+                                    <span>{employee.name}</span>
+                                  </div>
+                                </div>
+                              );
+                            } else {
+                              return null;
+                            }
+                          })}
+                        </td>
+                      ))}
+                    </tr>
+                  ) : null
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
