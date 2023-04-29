@@ -44,7 +44,6 @@ function Admin() {
   const [position, setPosition] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [phonenumber, setPhonenumber] = useState("0");
   const [department, setDepartment] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
   const [role, setRole] = useState("");
@@ -55,11 +54,11 @@ function Admin() {
       password: passwordReg,
       name: name,
       position: position,
-      phonenumber: phonenumber,
-      department: parseInt(department),
+      department: department,
       role: role,
     }).then((response) => {
-      console.log(response);
+      alert("Employee Added Successfully");
+      getEmployees();
     });
   };
 
@@ -124,8 +123,10 @@ function Admin() {
   };
 
   const deleteEmployee = (id) => {
+    setSelectedEmployeeId(id); // Update selectedEmployeeId state
     Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
       getEmployees();
+      getSchedules();
     });
   };
 
@@ -171,32 +172,17 @@ function Admin() {
   return (
     <div className="Container">
       <div className="header">
-      <h1>Schedule Central</h1>
+        <img className="pagelogo" src={require("./logo1116v2.png")} />
+        <h1>Employee Schedules</h1>
+        <div className="logout">
+          <button onClick={logOut}>LOG OUT</button>
+        </div>
       </div>
-      <div>
-        <button onClick={logOut}>logout</button>
-      </div>
-      <div>
-        <button onClick={handleBackwardArrowClick}>Backward</button>
-        <span>
-          Week {format(weekStart, "MM/dd/yyyy")} -{" "}
-          {format(weekEnd, "MM/dd/yyyy")}
-        </span>
-        <button onClick={handleForwardArrowClick}>Forward</button>
-      </div>
+      
+
 
       <div className="EmployeeInfo">
-        <main>
-          <button
-            className="addEmployee"
-            onClick={() => setButtonPopup(true)}
-          >
-            Add Employee
-          </button>
-        </main>
-        
         <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-       
           <label>Full Name:</label>
           <input
             type="text"
@@ -211,13 +197,7 @@ function Admin() {
               setPosition(e.target.value);
             }}
           />
-          <label>Phone #:</label>
-          <input
-            type="text"
-            onChange={(e) => {
-              setPhonenumber(e.target.value);
-            }}
-          />
+
           <label htmlFor="department">Department:</label>
           <select
             id="department"
@@ -226,9 +206,9 @@ function Admin() {
             }}
           >
             <option value="0"></option>
-            <option value="1">Nursing</option>
-            <option value="2">Bookeeping</option>
-            <option value="3">HR</option>
+            <option value="Nursing">Nursing</option>
+            <option value="Bookeeping">Bookeeping</option>
+            <option value="HR">HR</option>
           </select>
           <label>Username</label>
           <input
@@ -257,15 +237,32 @@ function Admin() {
             <option value="employee">Employee</option>
           </select>
           <button onClick={addEmployee}>Add Employee</button>
-
         </Popup>
-        
       </div>
 
       <div>
-        <h2>Employee Schedules</h2>
-        <div class="row">
-          <div class="col-md-12">
+        <div className="container">
+          <button className="addEmployee" onClick={() => setButtonPopup(true)}>
+            Add Employee
+          </button>
+
+          <div className="week-picker">
+            <button className="arrow-button" onClick={handleBackwardArrowClick}>
+              Backward
+            </button>
+            <span className="week-span">
+              Week {format(weekStart, "MM/dd/yyyy")} -{" "}
+              {format(weekEnd, "MM/dd/yyyy")}
+            </span>
+            <button className="arrow-button" onClick={handleForwardArrowClick}>
+              Forward
+            </button>
+          </div>
+        </div>
+
+
+        <div className="row">
+          <div className="col-md-12">
             <div className="schedule-table">
               <table className="table bg-white">
                 <thead>
@@ -277,16 +274,15 @@ function Admin() {
                     <th>Wednesday</th>
                     <th>Thursday</th>
                     <th>Friday</th>
-                    <th className="last">Saturday</th>
+                    <th>Saturday</th>
+                    <th className="last"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {/* Render rows for each employee of the week */}
                   {employeeList.map((employee, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="day">
-                        {employee.name}
-                      </td>
+                      <td className="day">{employee.name}</td>
                       {[
                         { isDay: isSunday, label: "Sun" },
                         { isDay: isMonday, label: "Mon" },
@@ -312,13 +308,17 @@ function Admin() {
                                     {schedule.start_work_hour}-
                                     {schedule.end_work_hour}
                                   </h4>
-                                  <div class="hover">                       
-                                    <h4>{schedule.start_work_hour}-
-                                    {schedule.end_work_hour}</h4>
-                                    <p>{employee.department} - {employee.position}</p>
-                                    
+                                  <div className="hover">
+                                    <h4>
+                                      {schedule.start_work_hour}-
+                                      {schedule.end_work_hour}
+                                    </h4>
+                                    <p>
+                                      {employee.department} -{" "}
+                                      {employee.position}
+                                    </p>
+
                                     <span>{employee.name}</span>
-                              
                                   </div>
                                 </div>
                               );
@@ -328,25 +328,32 @@ function Admin() {
                           })}
                         </td>
                       ))}
-                      
+                      <td>
                         <div className="Information">
-                          <main>
-                            <button
-                              className="registerButton"
-                              onClick={() => {
-                                setSelectedEmployeeId(employee.id_employees);
-                                setUpdateButtonPopup(true);
-                              }}
-                            >
-                              Update
-                            </button>
-                          </main>
+                          <button
+                            className="imageButton"
+                            onClick={() => {
+                              setSelectedEmployeeId(employee.id_employees);
+                              setUpdateButtonPopup(true);
+                            }}
+                          >
+                            <img
+                              src={require("./icons8-create-64.png")}
+                              alt="Button Image"
+                              className="button-image"
+                            />
+                          </button>
 
                           <Popup
                             trigger={updatebuttonPopup}
                             setTrigger={setUpdateButtonPopup}
                             employeeId={selectedEmployeeId}
                           >
+                            <label className="popup-headers">
+                              Availability
+                            </label>
+                            <br />
+                            <label>Date: </label>
                             <input
                               type="date"
                               placeholder="2000..."
@@ -354,37 +361,61 @@ function Admin() {
                                 setWorkDate(event.target.value);
                               }}
                             />
+                            <label>Starting Time: </label>
                             <input
-                              type="text"
+                              type="time"
                               placeholder="Work Start..."
                               onChange={(event) => {
-                                setWorkStart(event.target.value);
+                                const time = new Date();
+                                time.setHours(event.target.value.split(":")[0]);
+                                time.setMinutes(
+                                  event.target.value.split(":")[1]
+                                );
+                                const workStart = time.toLocaleTimeString(
+                                  "en-US",
+                                  { hour: "numeric", minute: "numeric" }
+                                );
+                                setWorkStart(workStart);
                               }}
                             />
+                            <label>Ending Time: </label>
                             <input
-                              type="text"
+                              type="time"
                               placeholder="Work End..."
                               onChange={(event) => {
-                                setWorkEnd(event.target.value);
+                                const time = new Date();
+                                time.setHours(event.target.value.split(":")[0]);
+                                time.setMinutes(
+                                  event.target.value.split(":")[1]
+                                );
+                                const workEnd = time.toLocaleTimeString(
+                                  "en-US",
+                                  {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  }
+                                );
+                                setWorkEnd(workEnd);
                               }}
                             />
                             <button
                               onClick={() => {
                                 updateEmployee(selectedEmployeeId);
                               }}
+                              className="popup-buttons buttonsHover"
                             >
-                              Update
+                              UPDATE SHIFT
                             </button>
+                            <br />
+                            <br />
 
-                            <button
-                              onClick={() => {
-                                deleteEmployee(selectedEmployeeId);
-                              }}
+                            <label
+                              htmlFor="UpdateRole"
+                              className="popup-headers"
                             >
-                              Delete Employee
-                            </button>
+                              Role
+                            </label>
 
-                            <label htmlFor="UpdateRole">Role:</label>
                             <select
                               id="UpdateRole"
                               onChange={(e) => {
@@ -401,29 +432,31 @@ function Admin() {
                               onClick={() => {
                                 updateRole(selectedEmployeeId);
                               }}
+                              className="popup-buttons buttonsHover"
                             >
-                              Update Role
+                              ASSIGN ROLE
                             </button>
 
                             <button
                               onClick={() => {
                                 deleteDate(selectedEmployeeId, workDate);
                               }}
+                              className="delete-shift-button"
                             >
                               Delete Shift
                             </button>
-                          </Popup>
 
-                          <button
+                            <button
                               onClick={() => {
                                 deleteEmployee(selectedEmployeeId);
                               }}
+                              className="delete-employee-button"
                             >
                               Delete Employee
                             </button>
-                          
+                          </Popup>
                         </div>
-                      
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -46,7 +46,6 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const name = req.body.name;
   const position = req.body.position;
-  const phonenumber = req.body.phonenumber;
   const department = req.body.department;
   const role = req.body.role;
 
@@ -67,8 +66,8 @@ app.post("/register", (req, res) => {
 
           // Insert the employee information with the retrieved login ID
           db.query(
-            "INSERT INTO all_employees (name, login_ID, position, phone_number, department_ID) VALUES (?,?,?,?,?)",
-            [name, login_id, position, phonenumber, department],
+            "INSERT INTO all_employees (name, login_ID, position, department) VALUES (?,?,?,?)",
+            [name, login_id, position, department],
             (err, result) => {
               if (err) {
                 console.log(err);
@@ -104,7 +103,7 @@ app.post("/login", (req, res) => {
           }
         });
       } else {
-        res.send({ message: "User doesn't exist" });
+        res.send({ message: "Wrong username/password combination!" });
       }
     }
   );
@@ -163,7 +162,7 @@ app.put("/update", (req, res) => {
               console.log(err);
               res.status(500).send("Error while inserting schedule");
             } else {
-              res.send("Schedule inserted");
+              res.send("Schedule Updated Successfully");
             }
           }
         );
@@ -251,34 +250,41 @@ app.delete("/delete/:id", (req, res) => {
             res.status(500).send("Error deleting employee from schedules");
             return;
           }
-
-          // Delete employee from all_employees table
+          // Delete employee from notification table
           db.query(
-            "DELETE FROM all_employees WHERE id_employees = ?",
+            "DELETE FROM notification WHERE employee_ID = ?",
             [id],
             (err, result) => {
               if (err) {
                 console.log(err);
-                res
-                  .status(500)
-                  .send("Error deleting employee from all_employees");
+                res.status(500).send("Error deleting employee from notification");
                 return;
               }
-
-              // Delete employee's login info
+              // Delete employee from all_employees table
               db.query(
-                "DELETE FROM login_info WHERE login_id = ?",
-                [login_id],
+                "DELETE FROM all_employees WHERE id_employees = ?",
+                [id],
                 (err, result) => {
                   if (err) {
                     console.log(err);
-                    res
-                      .status(500)
-                      .send("Error deleting employee's login info");
+                    res.status(500).send("Error deleting employee from all_employees");
                     return;
                   }
 
-                  res.send("Employee deleted successfully");
+                  // Delete employee's login info
+                  db.query(
+                    "DELETE FROM login_info WHERE login_id = ?",
+                    [login_id],
+                    (err, result) => {
+                      if (err) {
+                        console.log(err);
+                        res.status(500).send("Error deleting employee's login info");
+                        return;
+                      }
+
+                      res.send("Employee deleted successfully");
+                    }
+                  );
                 }
               );
             }
@@ -289,6 +295,7 @@ app.delete("/delete/:id", (req, res) => {
   );
 });
 
+
 app.get("/department/:id", (req, res) => {
   const login_id = req.params.id;
 
@@ -298,7 +305,7 @@ app.get("/department/:id", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Error retrieving department ID");
+        res.status(500).send("Error retrieving department");
       } else {
         res.send(result);
       }

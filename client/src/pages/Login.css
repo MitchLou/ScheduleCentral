@@ -191,3 +191,9 @@ input.empty {
     box-shadow: 0 0 0 0.125rem rgba(0, 119, 255, 0.25);
   }
 
+  .login-status {
+    color: red;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 16px;
+  }
