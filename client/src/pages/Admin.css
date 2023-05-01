@@ -1,14 +1,16 @@
 body {
   margin-top: 20px;
 }
-.Attributes{
-    
-  background-image: url('https://wallpapers.com/images/hd/white-gradient-background-1920-x-960-skuq4fjlzgjyj3ri.jpg');
-  background-size:cover;
-background-repeat:no-repeat;
-background-position:center center;
-height:100vh;
+.Attributes {
+  background-image: url("https://wallpapers.com/images/hd/white-gradient-background-1920-x-960-skuq4fjlzgjyj3ri.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
 }
+
 .schedule-table table thead tr {
   background: #4600b8;
 }
@@ -235,7 +237,7 @@ height:100vh;
 .popup-headers {
   color: black;
   font-size: 20px;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   text-decoration: underline;
   font-weight: bold;
 }
@@ -282,8 +284,6 @@ select#UpdateRole {
   margin-bottom: 10px;
   margin-top: 5px;
 }
-
-
 
 .imageButton {
   border: none;
@@ -337,20 +337,18 @@ select#UpdateRole {
   border-radius: 5px;
   margin-left: -8%;
   border: 2px solid black;
-
 }
 
 .week-picker {
   display: flex;
   align-items: center;
   margin-left: auto;
-  
 }
 
 .arrow-button {
   background-color: #0aee12; /* Green */
   border: none;
-  color: #4CAF50;
+  color: #4caf50;
   padding: 10px 10px;
   text-align: center;
   text-decoration: none;
@@ -366,8 +364,8 @@ select#UpdateRole {
   margin-right: 10px;
 }
 
-
-.backward-arrow, .forward-arrow {
+.backward-arrow,
+.forward-arrow {
   width: 29px;
   height: 29px;
 }
@@ -399,16 +397,3 @@ select#UpdateRole {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
