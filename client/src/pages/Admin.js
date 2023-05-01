@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import "./Admin.css";
 import { useNavigate } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
 import Popup from "./Popup";
 import {
@@ -29,6 +30,12 @@ function Admin() {
     endOfWeek(new Date(), { weekEndsOn: 6 })
   );
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleEmployeeList = employeeList.slice(startIndex, endIndex);
+
   const [usernameReg, setUsernameReg] = useState("");
   const [passwordReg, setPasswordReg] = useState("");
   const [buttonPopup, setButtonPopup] = useState(false);
@@ -42,10 +49,8 @@ function Admin() {
 
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [department, setDepartment] = useState("");
-  const [loginStatus, setLoginStatus] = useState("");
+
   const [role, setRole] = useState("");
 
   const addEmployee = () => {
@@ -212,7 +217,7 @@ function Admin() {
             <option value="Bookeeping">Bookeeping</option>
             <option value="HR">HR</option>
           </select>
-            <br />
+          <br />
           <label className="form-label">Username</label>
           <input
             className="form-input"
@@ -296,9 +301,10 @@ function Admin() {
                     <th className="last"></th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {/* Render rows for each employee of the week */}
-                  {employeeList.map((employee, rowIndex) => (
+                  {visibleEmployeeList.map((employee, rowIndex) => (
                     <tr key={rowIndex}>
                       <td className="day">{employee.name}</td>
                       {[
@@ -379,7 +385,9 @@ function Admin() {
                                 setWorkDate(event.target.value);
                               }}
                             />
-                            <label className="form-label">Starting Time: </label>
+                            <label className="form-label">
+                              Starting Time:{" "}
+                            </label>
                             <input
                               type="time"
                               placeholder="Work Start..."
@@ -479,6 +487,14 @@ function Admin() {
                   ))}
                 </tbody>
               </table>
+              <ReactPaginate
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
+                pageCount={Math.ceil(employeeList.length / itemsPerPage)}
+                onPageChange={({ selected }) => setCurrentPage(selected)}
+                containerClassName={"pagination"}
+                activeClassName={"active"}
+              />
             </div>
           </div>
         </div>
