@@ -107,7 +107,7 @@ function Employee() {
   return (
     <div className="Attributes">
       <div className="header">
-        <img className="pagelogo" src={require("./logo1116v2.png")} />
+        <img className="pagelogo" src={require("./schedulecLOGOFINALL.png")} />
         <h1>My Schedule</h1>
         <div className="logout">
           <button onClick={logOut}>LOG OUT</button>
@@ -187,6 +187,7 @@ function Employee() {
 
       <div className="row">
         <div className="col-md-12">
+        <div class="table-container">
           <div className="schedule-table">
             <table className="table bg-white">
               <thead>
@@ -257,6 +258,7 @@ function Employee() {
                 )}
               </tbody>
             </table>
+          </div>
           </div>
         </div>
       </div>

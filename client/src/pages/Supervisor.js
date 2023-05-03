@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import Popup from "./Popup";
+import "./Supervisor.css";
 import { useNavigate } from "react-router-dom";
 import {
   addDays,
@@ -27,7 +28,6 @@ function Supervisor() {
   const [weekEnd, setWeekEnd] = useState(
     endOfWeek(new Date(), { weekEndsOn: 6 })
   );
-  const [updatePopup, setupdatePopup] = useState(false);
   const [updatebuttonPopup, setUpdateButtonPopup] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(0);
 
@@ -140,7 +140,7 @@ function Supervisor() {
     <div className="Attributes">
     
       <div className="header">
-        <img className="pagelogo" src={require("./logo1116v2.png")} />
+        <img className="pagelogo" src={require("./schedulecLOGOFINALL.png")} />
         <h1>Department Schedules</h1>
         <div className="logout">
           <button onClick={logOut}>LOG OUT</button>
@@ -172,6 +172,7 @@ function Supervisor() {
 
       <div className="row">
         <div className="col-md-12">
+        <div class="table-container">
           <div className="schedule-table">
             <table className="table bg-white">
               <thead>
@@ -332,6 +333,7 @@ function Supervisor() {
                 )}
               </tbody>
             </table>
+          </div>
           </div>
         </div>
       </div>

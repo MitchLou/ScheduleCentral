@@ -11,8 +11,17 @@ body {
   overflow-x: hidden;
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+.schedule-table {
+  width: 100%;
+  margin: 0 auto;
+}
+
 .schedule-table table thead tr {
-  background: #4600b8;
+  background: #28292E;
 }
 .schedule-table table thead th {
   padding: 25px 50px;
@@ -47,7 +56,7 @@ body {
 .schedule-table table tbody td.day {
   font-size: 22px;
   font-weight: 600;
-  background: #e5d2ff;
+  background: #657786;
   border: 1px solid #ffffff;
   position: relative;
   transition: all 0.3s linear 0s;
@@ -197,7 +206,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #5900e7;
+  background-color: #28292E;
   color: white;
   padding: 0px 20px;
 }
@@ -322,8 +331,13 @@ select#UpdateRole {
   align-items: center;
 }
 
+.smaller-text {
+  font-size: 12px;
+}
+
+
 .addEmployee {
-  background-color: #00fc08; /* Green */
+  background-color: #dee4ec; /* Green */
   border: none;
   color: rgb(3, 3, 3);
   font-family: Arial, Helvetica, sans-serif;
@@ -335,10 +349,24 @@ select#UpdateRole {
   font-size: 17px;
   cursor: pointer;
   border-radius: 5px;
-  margin-left: -8%;
   border: 2px solid black;
+  position: absolute;
+  left: 0;
+  margin: 10px;
 }
 
+@media only screen and (max-width: 600px) {
+  .addEmployee {
+    padding: 5px 5px;
+    font-size: 14px;
+    margin: 5px;
+  }
+}
+
+
+
+
+/* Default styles */
 .week-picker {
   display: flex;
   align-items: center;
@@ -346,9 +374,9 @@ select#UpdateRole {
 }
 
 .arrow-button {
-  background-color: #0aee12; /* Green */
+  background-color: #dee4ec; /* Green */
   border: none;
-  color: #4caf50;
+  color: #dee4ec;
   padding: 10px 10px;
   text-align: center;
   text-decoration: none;
@@ -369,6 +397,26 @@ select#UpdateRole {
   width: 29px;
   height: 29px;
 }
+
+/* Media query for smaller screens */
+@media only screen and (max-width: 600px) {
+  .arrow-button {
+    padding: 5px 5px;
+    font-size: 14px;
+    margin: 5px 2px;
+  }
+
+  .week-span {
+    font-size: 18px;
+  }
+
+  .backward-arrow,
+  .forward-arrow {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 
 .form-label {
   display: block;

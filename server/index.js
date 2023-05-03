@@ -110,14 +110,18 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/employees", (req, res) => {
-  db.query("SELECT * FROM all_employees", (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+  db.query(
+    "SELECT all_employees.*, login_info.role FROM all_employees JOIN login_info ON all_employees.login_ID = login_info.login_id",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     }
-  });
+  );
 });
+
 
 app.get("/schedule", (req, res) => {
   db.query("SELECT * FROM schedules", (err, result) => {
@@ -312,6 +316,7 @@ app.get("/department/:id", (req, res) => {
     }
   );
 });
+
 
 app.get("/employee/:id", (req, res) => {
   const login_id = req.params.id;

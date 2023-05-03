@@ -31,7 +31,7 @@ function Admin() {
   );
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [itemsPerPage, setItemsPerPage] = useState(8); // how many users are visible in each page
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const visibleEmployeeList = employeeList.slice(startIndex, endIndex);
@@ -119,6 +119,7 @@ function Admin() {
     })
       .then((response) => {
         alert("Updated successfully!");
+        getEmployees();
         getSchedules();
       })
       .catch((error) => {
@@ -177,7 +178,7 @@ function Admin() {
   return (
     <div className="Attributes">
       <div className="header">
-        <img className="pagelogo" src={require("./logo1116v2.png")} />
+        <img className="pagelogo" src={require("./schedulecLOGOFINALL.png")} />
         <h1>Employee Schedules</h1>
         <div className="logout">
           <button onClick={logOut}>LOG OUT</button>
@@ -215,10 +216,14 @@ function Admin() {
             <option value="0"></option>
             <option value="Nursing">Nursing</option>
             <option value="Bookeeping">Bookeeping</option>
-            <option value="HR">HR</option>
+            <option value="Outpatient">Outpatient</option>
+            <option value="Inpatient">Inpatient</option>
+            <option value="Pharmacy">Pharmacy</option>
+            <option value="Intensive Care">Intensive Care</option>
+            <option value="Morgue">Morgue</option>
           </select>
           <br />
-          <label className="form-label">Username</label>
+          <label className="form-label">Username:</label>
           <input
             className="form-input"
             type="text"
@@ -226,7 +231,7 @@ function Admin() {
               setUsernameReg(e.target.value);
             }}
           />
-          <label className="form-label">Password</label>
+          <label className="form-label">Password:</label>
           <input
             className="form-input"
             type="text"
@@ -286,6 +291,7 @@ function Admin() {
 
         <div className="row">
           <div className="col-md-12">
+          <div class="table-container">
             <div className="schedule-table">
               <table className="table bg-white">
                 <thead>
@@ -306,7 +312,10 @@ function Admin() {
                   {/* Render rows for each employee of the week */}
                   {visibleEmployeeList.map((employee, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="day">{employee.name}</td>
+                      <td className="day">{employee.name}
+                      
+                      <p class="smaller-text">{employee.role}</p>
+</td>
                       {[
                         { isDay: isSunday, label: "Sun" },
                         { isDay: isMonday, label: "Mon" },
@@ -353,135 +362,121 @@ function Admin() {
                         </td>
                       ))}
                       <td>
-                        <div className="Information">
+                      <div className="Information">
+                        <button
+                          className="imageButton"
+                          onClick={() => {
+                            setSelectedEmployeeId(employee.id_employees);
+                            setUpdateButtonPopup(true);
+                          }}
+                        >
+                          <img
+                            src={require("./icons8-create-64.png")}
+                            alt="Button Image"
+                            className="button-image"
+                          />
+                        </button>
+
+                        <Popup
+                          trigger={updatebuttonPopup}
+                          setTrigger={setUpdateButtonPopup}
+                          employeeId={selectedEmployeeId}
+                        >
+                          <label className="popup-headers">Availability</label>
+                          <br />
+                          <label className="form-label">Date: </label>
+                          <input
+                            type="date"
+                            placeholder="2000..."
+                            onChange={(event) => {
+                              setWorkDate(event.target.value);
+                            }}
+                          />
+                          <label className="form-label">Starting Time: </label>
+                          <input
+                            type="time"
+                            placeholder="Work Start..."
+                            onChange={(event) => {
+                              const time = new Date();
+                              time.setHours(event.target.value.split(":")[0]);
+                              time.setMinutes(event.target.value.split(":")[1]);
+                              const workStart = time.toLocaleTimeString(
+                                "en-US",
+                                { hour: "numeric", minute: "numeric" }
+                              );
+                              setWorkStart(workStart);
+                            }}
+                          />
+                          <label className="form-label">Ending Time: </label>
+                          <input
+                            type="time"
+                            placeholder="Work End..."
+                            onChange={(event) => {
+                              const time = new Date();
+                              time.setHours(event.target.value.split(":")[0]);
+                              time.setMinutes(event.target.value.split(":")[1]);
+                              const workEnd = time.toLocaleTimeString("en-US", {
+                                hour: "numeric",
+                                minute: "numeric",
+                              });
+                              setWorkEnd(workEnd);
+                            }}
+                          />
                           <button
-                            className="imageButton"
                             onClick={() => {
-                              setSelectedEmployeeId(employee.id_employees);
-                              setUpdateButtonPopup(true);
+                              updateEmployee(selectedEmployeeId);
+                            }}
+                            className="popup-buttons buttonsHover"
+                          >
+                            UPDATE SHIFT
+                          </button>
+                          <br />
+                          <br />
+
+                          <label htmlFor="UpdateRole" className="popup-headers">
+                            Role
+                          </label>
+
+                          <select
+                            id="UpdateRole"
+                            onChange={(e) => {
+                              setRole(e.target.value);
                             }}
                           >
-                            <img
-                              src={require("./icons8-create-64.png")}
-                              alt="Button Image"
-                              className="button-image"
-                            />
+                            <option value="0"></option>
+                            <option value="admin">Admin</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="employee">Employee</option>
+                          </select>
+
+                          <button
+                            onClick={() => {
+                              updateRole(selectedEmployeeId);
+                            }}
+                            className="popup-buttons buttonsHover"
+                          >
+                            ASSIGN ROLE
                           </button>
 
-                          <Popup
-                            trigger={updatebuttonPopup}
-                            setTrigger={setUpdateButtonPopup}
-                            employeeId={selectedEmployeeId}
+                          <button
+                            onClick={() => {
+                              deleteDate(selectedEmployeeId, workDate);
+                            }}
+                            className="delete-shift-button"
                           >
-                            <label className="popup-headers">
-                              Availability
-                            </label>
-                            <br />
-                            <label className="form-label">Date: </label>
-                            <input
-                              type="date"
-                              placeholder="2000..."
-                              onChange={(event) => {
-                                setWorkDate(event.target.value);
-                              }}
-                            />
-                            <label className="form-label">
-                              Starting Time:{" "}
-                            </label>
-                            <input
-                              type="time"
-                              placeholder="Work Start..."
-                              onChange={(event) => {
-                                const time = new Date();
-                                time.setHours(event.target.value.split(":")[0]);
-                                time.setMinutes(
-                                  event.target.value.split(":")[1]
-                                );
-                                const workStart = time.toLocaleTimeString(
-                                  "en-US",
-                                  { hour: "numeric", minute: "numeric" }
-                                );
-                                setWorkStart(workStart);
-                              }}
-                            />
-                            <label className="form-label">Ending Time: </label>
-                            <input
-                              type="time"
-                              placeholder="Work End..."
-                              onChange={(event) => {
-                                const time = new Date();
-                                time.setHours(event.target.value.split(":")[0]);
-                                time.setMinutes(
-                                  event.target.value.split(":")[1]
-                                );
-                                const workEnd = time.toLocaleTimeString(
-                                  "en-US",
-                                  {
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                  }
-                                );
-                                setWorkEnd(workEnd);
-                              }}
-                            />
-                            <button
-                              onClick={() => {
-                                updateEmployee(selectedEmployeeId);
-                              }}
-                              className="popup-buttons buttonsHover"
-                            >
-                              UPDATE SHIFT
-                            </button>
-                            <br />
-                            <br />
+                            Delete Shift
+                          </button>
 
-                            <label
-                              htmlFor="UpdateRole"
-                              className="popup-headers"
-                            >
-                              Role
-                            </label>
-
-                            <select
-                              id="UpdateRole"
-                              onChange={(e) => {
-                                setRole(e.target.value);
-                              }}
-                            >
-                              <option value="0"></option>
-                              <option value="admin">Admin</option>
-                              <option value="supervisor">Supervisor</option>
-                              <option value="employee">Employee</option>
-                            </select>
-
-                            <button
-                              onClick={() => {
-                                updateRole(selectedEmployeeId);
-                              }}
-                              className="popup-buttons buttonsHover"
-                            >
-                              ASSIGN ROLE
-                            </button>
-
-                            <button
-                              onClick={() => {
-                                deleteDate(selectedEmployeeId, workDate);
-                              }}
-                              className="delete-shift-button"
-                            >
-                              Delete Shift
-                            </button>
-
-                            <button
-                              onClick={() => {
-                                deleteEmployee(selectedEmployeeId);
-                              }}
-                              className="delete-employee-button"
-                            >
-                              Delete Employee
-                            </button>
-                          </Popup>
-                        </div>
+                          <button
+                            onClick={() => {
+                              deleteEmployee(selectedEmployeeId);
+                            }}
+                            className="delete-employee-button"
+                          >
+                            Delete Employee
+                          </button>
+                        </Popup>
+                      </div>
                       </td>
                     </tr>
                   ))}
@@ -495,6 +490,7 @@ function Admin() {
                 containerClassName={"pagination"}
                 activeClassName={"active"}
               />
+              </div>
             </div>
           </div>
         </div>

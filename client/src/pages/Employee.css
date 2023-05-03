@@ -10,8 +10,16 @@ body {
   width: 100vw;
   overflow-x: hidden;
 }
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+.schedule-table {
+  width: 100%;
+  margin: 0 auto;
+}
 .schedule-table table thead tr {
-  background: #4600b8;
+  background: #28292E;
 }
 .schedule-table table thead th {
   padding: 25px 50px;
@@ -46,7 +54,7 @@ body {
 .schedule-table table tbody td.day {
   font-size: 22px;
   font-weight: 600;
-  background: #e5d2ff;
+  background: #657786;
   border: 1px solid #ffffff;
   position: relative;
   transition: all 0.3s linear 0s;

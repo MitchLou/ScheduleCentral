@@ -65,7 +65,7 @@ function Login() {
   return (
     <div className="login-container">
       <div className="toptab">
-        <img className="LOGO" src={require("./logo1116v2.png")} />
+        <img className="LOGO" src={require("./schedulecLOGOFINALL.png")} />
       </div>
 
       <div className="login">
@@ -132,13 +132,17 @@ function Login() {
       setDepartment(e.target.value);
     }}
   >
-    <option value="0"></option>
-    <option value="Nursing">Nursing</option>
-    <option value="Bookeeping">Bookeeping</option>
-    <option value="HR">HR</option>
+  <option value="0"></option>
+  <option value="Nursing">Nursing</option>
+  <option value="Bookeeping">Bookeeping</option>
+  <option value="Outpatient">Outpatient</option>
+  <option value="Inpatient">Inpatient</option>
+  <option value="Pharmacy">Pharmacy</option>
+  <option value="Intensive Care">Intensive Care</option>
+  <option value="Morgue">Morgue</option>
   </select>
 
-  <label for="username">Username</label>
+  <label for="username">Username:</label>
   <input
     type="text"
     id="username"
@@ -147,7 +151,7 @@ function Login() {
     }}
   />
 
-  <label for="password">Password</label>
+  <label for="password">Password:</label>
   <input
     type="text"
     id="password"

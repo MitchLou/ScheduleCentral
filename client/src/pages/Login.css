@@ -167,8 +167,8 @@ input.empty {
 }
 
 .LOGO{
-    width: 350px;
-    height: 250px;
+    width: 360px;
+    height: 200px;
     margin-top: auto;
     margin-bottom: -150px;
     transition: 0.5s;
