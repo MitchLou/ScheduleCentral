@@ -14,10 +14,21 @@ function Login() {
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState({
+          password: "", showPassword: false});
   const [department, setDepartment] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
   const [role, setRole] = useState(null);
+  
+  const handleClickShowPassword = () => {
+    setPassword({ ...password, showPassword: !password.showPassword });
+  };
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  const handlePasswordChange = (prop) => (event) => {
+    setPassword({ ...password, [prop]: event.target.value });
+  };
 
   Axios.defaults.withCredentials = true;
 
@@ -85,12 +96,15 @@ function Login() {
         <div id="boxing">
           <input
             className="varr"
-            type="text"
+            //type="text"
+            type={password.showPassword ? "text" : "password"}
             placeholder="Password"
             onChange={(e) => {
               setPassword(e.target.value);
+              handlePasswordChange("password");
             }}
           />
+
         </div>
         <button className="submit" onClick={login}>
           Login

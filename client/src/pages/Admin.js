@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Axios from "axios";
+import React, { useEffect, useState } from "react";import Axios from "axios";
 import "./Admin.css";
 import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-
 import Popup from "./Popup";
+
 import {
   addDays,
   format,
@@ -18,6 +17,7 @@ import {
   isFriday,
   isSaturday,
   isSunday,
+  isSameDay,
 } from "date-fns";
 
 function Admin() {
@@ -70,7 +70,10 @@ function Admin() {
   useEffect(() => {
     getEmployees();
     getSchedules();
-  }, []);
+    const conflicts = visibleEmployeeList.filter(hasScheduleConflict);
+  }, [employeeList, visibleEmployeeList]);
+
+  
 
   const logOut = () => {
     Axios.post("http://localhost:3001/logout").then((response) => {
@@ -81,9 +84,17 @@ function Admin() {
 
   const getEmployees = () => {
     Axios.get("http://localhost:3001/employees").then((response) => {
-      setEmployeeList(response.data);
+      const employees = response.data;
+      for (const employee of employees) {
+        employee.schedules = scheduleList.filter(
+          (schedule) => schedule.employee_ID === employee.id_employees
+        );
+      }
+      setEmployeeList(employees);
+      getSchedules(); // Fetch schedule list after setting employee list
     });
   };
+  
 
   const getSchedules = () => {
     Axios.get("http://localhost:3001/schedule").then((response) => {
@@ -155,11 +166,6 @@ function Admin() {
     });
   };
 
-  useEffect(() => {
-    getEmployees();
-    getSchedules();
-  }, []);
-
   const handleForwardArrowClick = () => {
     const newStart = addDays(weekStart, 7); // Increment start of week range by 7)
     const newEnd = addDays(weekEnd, 7);
@@ -174,6 +180,32 @@ function Admin() {
     setWeekStart(newStart);
     setWeekEnd(newEnd); // Update week range state
   };
+
+ function hasScheduleConflict(employee1) {
+  
+  const filteredEmployees = employeeList.filter(
+    (employee2) =>
+      employee1.position === employee2.position &&
+      employee1.department === employee2.department &&
+      employee1.id_employees !== employee2.id_employees
+  );
+
+  for (const schedule1 of employee1.schedules) {
+    for (const employee2 of filteredEmployees) {
+      for (const schedule2 of employee2.schedules) {
+        if (
+          isSameDay(new Date(schedule1.work_date), new Date(schedule2.work_date)) &&
+          ((schedule1.start_work_hour <= schedule2.start_work_hour && schedule1.end_work_hour > schedule2.start_work_hour) ||
+            (schedule2.start_work_hour <= schedule1.start_work_hour && schedule2.end_work_hour > schedule1.start_work_hour))
+        ) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
 
   return (
     <div className="Attributes">
@@ -291,205 +323,248 @@ function Admin() {
 
         <div className="row">
           <div className="col-md-12">
-          <div class="table-container">
-            <div className="schedule-table">
-              <table className="table bg-white">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Sunday</th>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
-                    <th className="last"></th>
-                  </tr>
-                </thead>
+            <div class="table-container">
+              <div className="schedule-table">
+                <table className="table bg-white">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Sunday</th>
+                      <th>Monday</th>
+                      <th>Tuesday</th>
+                      <th>Wednesday</th>
+                      <th>Thursday</th>
+                      <th>Friday</th>
+                      <th>Saturday</th>
+                      <th className="last"></th>
+                    </tr>
+                  </thead>
 
-                <tbody>
-                  {/* Render rows for each employee of the week */}
-                  {visibleEmployeeList.map((employee, rowIndex) => (
-                    <tr key={rowIndex}>
-                      <td className="day">{employee.name}
-                      
-                      <p class="smaller-text">{employee.role}</p>
-</td>
-                      {[
-                        { isDay: isSunday, label: "Sun" },
-                        { isDay: isMonday, label: "Mon" },
-                        { isDay: isTuesday, label: "Tue" },
-                        { isDay: isWednesday, label: "Wed" },
-                        { isDay: isThursday, label: "Thu" },
-                        { isDay: isFriday, label: "Fri" },
-                        { isDay: isSaturday, label: "Sat" },
-                      ].map(({ isDay, label }, columnIndex) => (
-                        <td className="active" key={columnIndex}>
-                          {scheduleList.map((schedule, cellIndex) => {
-                            if (
-                              employee.id_employees === schedule.employee_ID &&
-                              isSameWeek(
-                                new Date(schedule.work_date),
-                                weekEnd
-                              ) &&
-                              isDay(new Date(schedule.work_date))
-                            ) {
-                              return (
-                                <div key={cellIndex}>
-                                  <h4>
-                                    {schedule.start_work_hour}-
-                                    {schedule.end_work_hour}
-                                  </h4>
-                                  <div className="hover">
+                  <tbody>
+                    {visibleEmployeeList.map((employee, rowIndex) => (
+                      <tr
+                        key={rowIndex}
+                        className={
+                          hasScheduleConflict(
+                            employee,
+                            visibleEmployeeList.filter(
+                              (emp) => emp !== employee
+                            )
+                          )
+                            ? "conflict-row"
+                            : ""
+                        }
+                      >
+                        <td className="day">
+                          {employee.name}
+
+                          <p class="smaller-text">{employee.role}</p>
+                        </td>
+                        {[
+                          { isDay: isSunday, label: "Sun" },
+                          { isDay: isMonday, label: "Mon" },
+                          { isDay: isTuesday, label: "Tue" },
+                          { isDay: isWednesday, label: "Wed" },
+                          { isDay: isThursday, label: "Thu" },
+                          { isDay: isFriday, label: "Fri" },
+                          { isDay: isSaturday, label: "Sat" },
+                        ].map(({ isDay, label }, columnIndex) => (
+                          <td className="active" key={columnIndex}>
+                            {scheduleList.map((schedule, cellIndex) => {
+                              if (
+                                employee.id_employees ===
+                                  schedule.employee_ID &&
+                                isSameWeek(
+                                  new Date(schedule.work_date),
+                                  weekEnd
+                                ) &&
+                                isDay(new Date(schedule.work_date))
+                              ) {
+                                return (
+                                  <div key={cellIndex}>
                                     <h4>
                                       {schedule.start_work_hour}-
                                       {schedule.end_work_hour}
                                     </h4>
-                                    <p>
-                                      {employee.department} -{" "}
-                                      {employee.position}
-                                    </p>
+                                    <div className="hover">
+                                      <h4>
+                                        {schedule.start_work_hour}-
+                                        {schedule.end_work_hour}
+                                      </h4>
+                                      <p>
+                                        {employee.department} -{" "}
+                                        {employee.position}
+                                      </p>
 
-                                    <span>{employee.name}</span>
+                                      <span>{employee.name}</span>
+                                    </div>
                                   </div>
-                                </div>
-                              );
-                            } else {
-                              return null;
-                            }
-                          })}
+                                );
+                              } else {
+                                return null;
+                              }
+                            })}
+                          </td>
+                        ))}
+                        <td>
+                          <div className="Information">
+                            <button
+                              className="imageButton"
+                              onClick={() => {
+                                setSelectedEmployeeId(employee.id_employees);
+                                setUpdateButtonPopup(true);
+                              }}
+                            >
+                              <img
+                                src={require("./icons8-create-64.png")}
+                                alt="Button Image"
+                                className="button-image"
+                              />
+                            </button>
+
+                            <Popup
+                              trigger={updatebuttonPopup}
+                              setTrigger={setUpdateButtonPopup}
+                              employeeId={selectedEmployeeId}
+                            >
+                              <label className="popup-headers">
+                                Availability
+                              </label>
+                              <br />
+                              <label className="form-label">Date: </label>
+                              <input
+                                type="date"
+                                placeholder="2000..."
+                                onChange={(event) => {
+                                  setWorkDate(event.target.value);
+                                }}
+                              />
+                              <label className="form-label">
+                                Starting Time:{" "}
+                              </label>
+                              <input
+                                type="time"
+                                placeholder="Work Start..."
+                                onChange={(event) => {
+                                  const time = new Date();
+                                  time.setHours(
+                                    event.target.value.split(":")[0]
+                                  );
+                                  time.setMinutes(
+                                    event.target.value.split(":")[1]
+                                  );
+                                  const workStart = time.toLocaleTimeString(
+                                    "en-US",
+                                    { hour: "numeric", minute: "numeric" }
+                                  );
+                                  setWorkStart(workStart);
+                                }}
+                              />
+                              <label className="form-label">
+                                Ending Time:{" "}
+                              </label>
+                              <input
+                                type="time"
+                                placeholder="Work End..."
+                                onChange={(event) => {
+                                  const time = new Date();
+                                  time.setHours(
+                                    event.target.value.split(":")[0]
+                                  );
+                                  time.setMinutes(
+                                    event.target.value.split(":")[1]
+                                  );
+                                  const workEnd = time.toLocaleTimeString(
+                                    "en-US",
+                                    {
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    }
+                                  );
+                                  setWorkEnd(workEnd);
+                                }}
+                              />
+                              <button
+                                onClick={() => {
+                                  updateEmployee(selectedEmployeeId);
+                                }}
+                                className="popup-buttons buttonsHover"
+                              >
+                                UPDATE SHIFT
+                              </button>
+                              <br />
+                              <br />
+
+                              <label
+                                htmlFor="UpdateRole"
+                                className="popup-headers"
+                              >
+                                Role
+                              </label>
+
+                              <select
+                                id="UpdateRole"
+                                onChange={(e) => {
+                                  setRole(e.target.value);
+                                }}
+                              >
+                                <option value="0"></option>
+                                <option value="admin">Admin</option>
+                                <option value="supervisor">Supervisor</option>
+                                <option value="employee">Employee</option>
+                              </select>
+
+                              <button
+                                onClick={() => {
+                                  updateRole(selectedEmployeeId);
+                                }}
+                                className="popup-buttons buttonsHover"
+                              >
+                                ASSIGN ROLE
+                              </button>
+
+                              <button
+                                onClick={() => {
+                                  const confirmBox = window.confirm(
+                                    "This will remove an employee's shift from the system. Are you sure you want to proceed?"
+                                  );
+                                  if (confirmBox == true) {
+                                    deleteDate(selectedEmployeeId, workDate);
+                                  }
+                                }}
+                                className="delete-shift-button"
+                              >
+                                Delete Shift
+                              </button>
+
+                              <button
+                                onClick={() => {
+                                  const confirmBox = window.confirm(
+                                    "This will permanently delete an employee from the system. Are you sure you want to proceed?"
+                                  );
+                                  if (confirmBox == true) {
+                                    deleteEmployee(selectedEmployeeId);
+                                  }
+                                }}
+                                className="delete-employee-button"
+                              >
+                                Delete Employee
+                              </button>
+                            </Popup>
+                          </div>
                         </td>
-                      ))}
-                      <td>
-                      <div className="Information">
-                        <button
-                          className="imageButton"
-                          onClick={() => {
-                            setSelectedEmployeeId(employee.id_employees);
-                            setUpdateButtonPopup(true);
-                          }}
-                        >
-                          <img
-                            src={require("./icons8-create-64.png")}
-                            alt="Button Image"
-                            className="button-image"
-                          />
-                        </button>
-
-                        <Popup
-                          trigger={updatebuttonPopup}
-                          setTrigger={setUpdateButtonPopup}
-                          employeeId={selectedEmployeeId}
-                        >
-                          <label className="popup-headers">Availability</label>
-                          <br />
-                          <label className="form-label">Date: </label>
-                          <input
-                            type="date"
-                            placeholder="2000..."
-                            onChange={(event) => {
-                              setWorkDate(event.target.value);
-                            }}
-                          />
-                          <label className="form-label">Starting Time: </label>
-                          <input
-                            type="time"
-                            placeholder="Work Start..."
-                            onChange={(event) => {
-                              const time = new Date();
-                              time.setHours(event.target.value.split(":")[0]);
-                              time.setMinutes(event.target.value.split(":")[1]);
-                              const workStart = time.toLocaleTimeString(
-                                "en-US",
-                                { hour: "numeric", minute: "numeric" }
-                              );
-                              setWorkStart(workStart);
-                            }}
-                          />
-                          <label className="form-label">Ending Time: </label>
-                          <input
-                            type="time"
-                            placeholder="Work End..."
-                            onChange={(event) => {
-                              const time = new Date();
-                              time.setHours(event.target.value.split(":")[0]);
-                              time.setMinutes(event.target.value.split(":")[1]);
-                              const workEnd = time.toLocaleTimeString("en-US", {
-                                hour: "numeric",
-                                minute: "numeric",
-                              });
-                              setWorkEnd(workEnd);
-                            }}
-                          />
-                          <button
-                            onClick={() => {
-                              updateEmployee(selectedEmployeeId);
-                            }}
-                            className="popup-buttons buttonsHover"
-                          >
-                            UPDATE SHIFT
-                          </button>
-                          <br />
-                          <br />
-
-                          <label htmlFor="UpdateRole" className="popup-headers">
-                            Role
-                          </label>
-
-                          <select
-                            id="UpdateRole"
-                            onChange={(e) => {
-                              setRole(e.target.value);
-                            }}
-                          >
-                            <option value="0"></option>
-                            <option value="admin">Admin</option>
-                            <option value="supervisor">Supervisor</option>
-                            <option value="employee">Employee</option>
-                          </select>
-
-                          <button
-                            onClick={() => {
-                              updateRole(selectedEmployeeId);
-                            }}
-                            className="popup-buttons buttonsHover"
-                          >
-                            ASSIGN ROLE
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              deleteDate(selectedEmployeeId, workDate);
-                            }}
-                            className="delete-shift-button"
-                          >
-                            Delete Shift
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              deleteEmployee(selectedEmployeeId);
-                            }}
-                            className="delete-employee-button"
-                          >
-                            Delete Employee
-                          </button>
-                        </Popup>
-                      </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <ReactPaginate
-                previousLabel={"Previous"}
-                nextLabel={"Next"}
-                pageCount={Math.ceil(employeeList.length / itemsPerPage)}
-                onPageChange={({ selected }) => setCurrentPage(selected)}
-                containerClassName={"pagination"}
-                activeClassName={"active"}
-              />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <ReactPaginate
+                  previousLabel={"Previous"}
+                  nextLabel={"Next"}
+                  pageCount={Math.ceil(employeeList.length / itemsPerPage)}
+                  onPageChange={({ selected }) => setCurrentPage(selected)}
+                  containerClassName={"pagination"}
+                  activeClassName={"active"}
+                />
               </div>
             </div>
           </div>

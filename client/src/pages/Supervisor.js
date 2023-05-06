@@ -319,7 +319,12 @@ function Supervisor() {
 
                             <button
                               onClick={() => {
+                                const confirmBox = window.confirm(
+                                  "This will remove an employee's shift from the system. Are you sure you want to proceed?"
+                                )
+                                if (confirmBox == true){
                                 deleteDate(selectedEmployeeId, workDate);
+                                }
                               }}
                               className="delete-shift-button"
                             >

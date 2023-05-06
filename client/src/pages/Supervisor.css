@@ -237,3 +237,9 @@ body {
     background-color: #0029f828;
     color: #86d4f5;
   }
+
+  .schedule-cell.conflict {
+    background-color: red;
+    color: white;
+  }
+  

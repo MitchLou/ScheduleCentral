@@ -476,3 +476,7 @@ select#UpdateRole {
   pointer-events: none;
 }
 
+.conflict-row {
+  color: #ff0000;
+}
+
