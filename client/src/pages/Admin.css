@@ -29,9 +29,13 @@ body {
   text-align: center;
   font-size: 20px;
   font-weight: 800;
-
   position: relative;
   border: 0;
+  cursor: pointer; /* Add cursor pointer to indicate clickable */
+}
+
+.schedule-table table thead th:hover {
+  background-color: #555; /* Add hover background color */
 }
 .schedule-table table thead th:before {
   content: "";

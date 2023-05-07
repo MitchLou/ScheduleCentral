@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";import Axios from "axios";
+import React, { useEffect, useState } from "react";
+import Axios from "axios";
 import "./Admin.css";
 import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
@@ -73,8 +74,6 @@ function Admin() {
     const conflicts = visibleEmployeeList.filter(hasScheduleConflict);
   }, [employeeList, visibleEmployeeList]);
 
-  
-
   const logOut = () => {
     Axios.post("http://localhost:3001/logout").then((response) => {
       console.log(response);
@@ -94,7 +93,6 @@ function Admin() {
       getSchedules(); // Fetch schedule list after setting employee list
     });
   };
-  
 
   const getSchedules = () => {
     Axios.get("http://localhost:3001/schedule").then((response) => {
@@ -181,31 +179,54 @@ function Admin() {
     setWeekEnd(newEnd); // Update week range state
   };
 
- function hasScheduleConflict(employee1) {
-  
-  const filteredEmployees = employeeList.filter(
-    (employee2) =>
-      employee1.position === employee2.position &&
-      employee1.department === employee2.department &&
-      employee1.id_employees !== employee2.id_employees
-  );
+  function formatTime(time) {
+    // Split the time value into hours and minutes
+    const [hours, minutes] = time.split(":");
 
-  for (const schedule1 of employee1.schedules) {
+    // Create a Date object and set the hours and minutes
+    const formattedTime = new Date();
+    formattedTime.setHours(hours);
+    formattedTime.setMinutes(minutes);
+
+    // Format the time with AM/PM
+    const options = { hour: "numeric", minute: "numeric", hour12: true };
+    return formattedTime.toLocaleTimeString("en-US", options);
+  }
+
+  function hasScheduleConflict(employee1, work_date, work_start, work_end) {
+    const filteredEmployees = employeeList.filter(
+      (employee2) =>
+        employee1.position === employee2.position &&
+        employee1.department === employee2.department &&
+        employee1.id_employees !== employee2.id_employees
+    );
+
     for (const employee2 of filteredEmployees) {
-      for (const schedule2 of employee2.schedules) {
+      const employee2Schedules = scheduleList.filter(
+        (schedule) =>
+          schedule.employee_ID === employee2.id_employees &&
+          isSameDay(new Date(schedule.work_date), new Date(work_date))
+      );
+
+      for (const schedule of employee2Schedules) {
         if (
-          isSameDay(new Date(schedule1.work_date), new Date(schedule2.work_date)) &&
-          ((schedule1.start_work_hour <= schedule2.start_work_hour && schedule1.end_work_hour > schedule2.start_work_hour) ||
-            (schedule2.start_work_hour <= schedule1.start_work_hour && schedule2.end_work_hour > schedule1.start_work_hour))
+          (schedule.start_work_hour <= work_end &&
+            schedule.end_work_hour >= work_start) || // Updated condition
+          (work_start <= schedule.end_work_hour &&
+            work_end >= schedule.start_work_hour) || // Updated condition
+          (work_start <= schedule.start_work_hour &&
+            work_end >= schedule.end_work_hour) // Updated condition
         ) {
-          return true;
+          return {
+            conflictingShift: schedule.work_date,
+            conflictingEmployee: employee2,
+          };
         }
       }
     }
-  }
 
-  return false;
-}
+    return false; // No conflicting shifts found
+  }
 
   return (
     <div className="Attributes">
@@ -342,23 +363,10 @@ function Admin() {
 
                   <tbody>
                     {visibleEmployeeList.map((employee, rowIndex) => (
-                      <tr
-                        key={rowIndex}
-                        className={
-                          hasScheduleConflict(
-                            employee,
-                            visibleEmployeeList.filter(
-                              (emp) => emp !== employee
-                            )
-                          )
-                            ? "conflict-row"
-                            : ""
-                        }
-                      >
+                      <tr key={rowIndex}>
                         <td className="day">
                           {employee.name}
-
-                          <p class="smaller-text">{employee.role}</p>
+                          <p className="smaller-text">{employee.role}</p>
                         </td>
                         {[
                           { isDay: isSunday, label: "Sun" },
@@ -380,23 +388,40 @@ function Admin() {
                                 ) &&
                                 isDay(new Date(schedule.work_date))
                               ) {
+                                const conflict = hasScheduleConflict(
+                                  employee,
+                                  schedule.work_date,
+                                  schedule.start_work_hour,
+                                  schedule.end_work_hour
+                                );
+                                const isConflict = conflict;
+
                                 return (
                                   <div key={cellIndex}>
                                     <h4>
-                                      {schedule.start_work_hour}-
-                                      {schedule.end_work_hour}
+                                      {formatTime(schedule.start_work_hour)} -{" "}
+                                      {formatTime(schedule.end_work_hour)}
                                     </h4>
-                                    <div className="hover">
+                                    <div
+                                      className={`hover ${
+                                        isConflict ? "conflict" : ""
+                                      }`}
+                                    >
                                       <h4>
-                                        {schedule.start_work_hour}-
-                                        {schedule.end_work_hour}
+                                        {formatTime(schedule.start_work_hour)} -{" "}
+                                        {formatTime(schedule.end_work_hour)}
                                       </h4>
+
                                       <p>
                                         {employee.department} -{" "}
                                         {employee.position}
                                       </p>
-
-                                      <span>{employee.name}</span>
+                                      {isConflict && (
+                                        <span className="conflict-text">
+                                          Conflicts with{" "}
+                                          {conflict.conflictingEmployee.name}
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 );
@@ -446,18 +471,21 @@ function Admin() {
                                 type="time"
                                 placeholder="Work Start..."
                                 onChange={(event) => {
+                                  const inputTime = event.target.value;
+                                  const [hours, minutes] = inputTime.split(":");
+
+                                  // Create a new Date object and set the hours and minutes
                                   const time = new Date();
-                                  time.setHours(
-                                    event.target.value.split(":")[0]
-                                  );
-                                  time.setMinutes(
-                                    event.target.value.split(":")[1]
-                                  );
-                                  const workStart = time.toLocaleTimeString(
-                                    "en-US",
-                                    { hour: "numeric", minute: "numeric" }
-                                  );
-                                  setWorkStart(workStart);
+                                  time.setHours(hours);
+                                  time.setMinutes(minutes);
+
+                                  // Format the time as HH:MM
+                                  const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
+
+                                  // Store the formatted time in MySQL or use it as needed
+                                  // Send it to the server for storage or further processing
+
+                                  setWorkStart(formattedTime); // Optionally, update the state if required
                                 }}
                               />
                               <label className="form-label">
@@ -467,23 +495,24 @@ function Admin() {
                                 type="time"
                                 placeholder="Work End..."
                                 onChange={(event) => {
+                                  const inputTime = event.target.value;
+                                  const [hours, minutes] = inputTime.split(":");
+
+                                  // Create a new Date object and set the hours and minutes
                                   const time = new Date();
-                                  time.setHours(
-                                    event.target.value.split(":")[0]
-                                  );
-                                  time.setMinutes(
-                                    event.target.value.split(":")[1]
-                                  );
-                                  const workEnd = time.toLocaleTimeString(
-                                    "en-US",
-                                    {
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    }
-                                  );
-                                  setWorkEnd(workEnd);
+                                  time.setHours(hours);
+                                  time.setMinutes(minutes);
+
+                                  // Format the time as HH:MM
+                                  const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
+
+                                  // Store the formatted time in MySQL or use it as needed
+                                  // Send it to the server for storage or further processing
+
+                                  setWorkEnd(formattedTime); // Optionally, update the state if required
                                 }}
                               />
+
                               <button
                                 onClick={() => {
                                   updateEmployee(selectedEmployeeId);
