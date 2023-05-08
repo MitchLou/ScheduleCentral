@@ -31,11 +31,11 @@ body {
   font-weight: 800;
   position: relative;
   border: 0;
-  cursor: pointer; /* Add cursor pointer to indicate clickable */
+  cursor: pointer; 
 }
 
 .schedule-table table thead th:hover {
-  background-color: #555; /* Add hover background color */
+  background-color: #555; 
 }
 .schedule-table table thead th:before {
   content: "";
@@ -243,8 +243,8 @@ body {
 }
 
 .pagelogo {
-  height: 70px; /* set the height of the logo */
-  margin-right: 10px; /* add a small margin to the right of the logo */
+  height: 70px;
+  margin-right: 10px; 
 }
 
 .popup-headers {
@@ -309,7 +309,6 @@ select#UpdateRole {
   height: 40px;
   cursor: pointer;
   margin-bottom: 5px;
-  /* add any additional styles here */
 }
 
 .deleteButton {
@@ -341,7 +340,7 @@ select#UpdateRole {
 
 
 .addEmployee {
-  background-color: #dee4ec; /* Green */
+  background-color: #dee4ec;
   border: none;
   color: rgb(3, 3, 3);
   font-family: Arial, Helvetica, sans-serif;
@@ -354,7 +353,6 @@ select#UpdateRole {
   cursor: pointer;
   border-radius: 5px;
   border: 2px solid black;
-  position: absolute;
   left: 0;
   margin: 10px;
 }
@@ -370,7 +368,6 @@ select#UpdateRole {
 
 
 
-/* Default styles */
 .week-picker {
   display: flex;
   align-items: center;
@@ -378,7 +375,7 @@ select#UpdateRole {
 }
 
 .arrow-button {
-  background-color: #dee4ec; /* Green */
+  background-color: #dee4ec; 
   border: none;
   color: #dee4ec;
   padding: 10px 10px;
@@ -402,7 +399,7 @@ select#UpdateRole {
   height: 29px;
 }
 
-/* Media query for smaller screens */
+
 @media only screen and (max-width: 600px) {
   .arrow-button {
     padding: 5px 5px;
@@ -484,3 +481,31 @@ select#UpdateRole {
   color: #ff0000;
 }
 
+
+
+.password-input-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password-button {
+  margin-left: 10px;
+}
+
+.toggle-password-button {
+  background-color: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-left: 5px;
+}
+
+.toggle-password-button:hover {
+  color: #555;
+}
+
+.toggle-password-button:focus {
+  outline: none;
+}

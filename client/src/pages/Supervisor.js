@@ -16,6 +16,7 @@ import {
   isFriday,
   isSaturday,
   isSunday,
+  isSameDay,
 } from "date-fns";
 
 function Supervisor() {
@@ -36,6 +37,7 @@ function Supervisor() {
   const [workEnd, setWorkEnd] = useState("");
   const [loginInfo, setLoginInfo] = useState(0);
   const [department, setDepartment] = useState("");
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     Axios.get("http://localhost:3001/login").then((response) => {
@@ -122,25 +124,70 @@ function Supervisor() {
   }, []);
 
   const handleForwardArrowClick = () => {
-    const newStart = addDays(weekStart, 7); // Increment start of week range by 7)
+    const newStart = addDays(weekStart, 7); 
     const newEnd = addDays(weekEnd, 7);
     setWeekStart(newStart);
-    setWeekEnd(newEnd); // Update week range state
+    setWeekEnd(newEnd); 
   };
 
-  // Function to handle backward arrow click
   const handleBackwardArrowClick = () => {
-    const newStart = addDays(weekStart, -7); // Increment start of week range by 7)
+    const newStart = addDays(weekStart, -7); 
     const newEnd = addDays(weekEnd, -7);
     setWeekStart(newStart);
-    setWeekEnd(newEnd); // Update week range state
+    setWeekEnd(newEnd); 
   };
+
+  function hasScheduleConflict(employee1, work_date, work_start, work_end) {
+    const filteredEmployees = employeeList.filter(
+      (employee2) =>
+        employee1.position === employee2.position &&
+        employee1.department === employee2.department &&
+        employee1.id_employees !== employee2.id_employees
+    );
+
+    for (const employee2 of filteredEmployees) {
+      const employee2Schedules = scheduleList.filter(
+        (schedule) =>
+          schedule.employee_ID === employee2.id_employees &&
+          isSameDay(new Date(schedule.work_date), new Date(work_date))
+      );
+
+      for (const schedule of employee2Schedules) {
+        if (
+          ((work_start < schedule.end_work_hour &&
+            work_end > schedule.start_work_hour) ||
+            (work_start < schedule.start_work_hour &&
+              work_end > schedule.end_work_hour)) &&
+          work_start != schedule.end_work_hour
+        ) {
+          return {
+            conflictingShift: schedule.work_date,
+            conflictingEmployee: employee2,
+          };
+        }
+      }
+    }
+
+    return false; 
+  }
+
+  function formatTime(time) {
+    
+    const [hours, minutes] = time.split(":");
+
+    const formattedTime = new Date();
+    formattedTime.setHours(hours);
+    formattedTime.setMinutes(minutes);
+
+    const options = { hour: "numeric", minute: "numeric", hour12: true };
+    return formattedTime.toLocaleTimeString("en-US", options);
+  }
 
   return (
     <div className="Attributes">
     
       <div className="header">
-        <img className="pagelogo" src={require("./schedulecLOGOFINALL.png")} />
+        <img className="pagelogo" src={require("./images/schedulecLOGOFINALL.png")} />
         <h1>Department Schedules</h1>
         <div className="logout">
           <button onClick={logOut}>LOG OUT</button>
@@ -151,7 +198,7 @@ function Supervisor() {
           <div className="week-picker">
             <button className="arrow-button" onClick={handleBackwardArrowClick}>
               <img
-                src={require("./icons8-left-64.png")}
+                src={require("./images/icons8-left-64.png")}
                 alt="Button Image"
                 className="backward-arrow"
               />
@@ -162,7 +209,7 @@ function Supervisor() {
             </span>
             <button className="arrow-button" onClick={handleForwardArrowClick}>
             <img
-                src={require("./icons8-right-64.png")}
+                src={require("./images/icons8-right-64.png")}
                 alt="Button Image"
                 className="forward-arrow"
               />
@@ -189,7 +236,6 @@ function Supervisor() {
                 </tr>
               </thead>
               <tbody>
-                {/* Render rows for each employee of the week */}
                 {employeeList.map((employee, rowIndex) =>
                   employee.department === department[0]?.department ? (
                     <tr key={rowIndex}>
@@ -204,33 +250,50 @@ function Supervisor() {
                         { isDay: isSaturday, label: "Sat" },
                       ].map(({ isDay, label }, columnIndex) => (
                         <td className="active" key={columnIndex}>
-                          {scheduleList.map((schedule, cellIndex) => {
-                            if (
-                              employee.id_employees === schedule.employee_ID &&
-                              isSameWeek(
-                                new Date(schedule.work_date),
-                                weekEnd
-                              ) &&
-                              isDay(new Date(schedule.work_date))
-                            ) {
+                            {scheduleList.map((schedule, cellIndex) => {
+                              if (
+                                employee.id_employees ===
+                                  schedule.employee_ID &&
+                                isSameWeek(
+                                  new Date(schedule.work_date),
+                                  weekEnd
+                                ) &&
+                                isDay(new Date(schedule.work_date))
+                              ) {
+                                const conflict = hasScheduleConflict(
+                                  employee,
+                                  schedule.work_date,
+                                  schedule.start_work_hour,
+                                  schedule.end_work_hour
+                                );
+                                const isConflict = conflict;
                               return (
                                 <div key={cellIndex}>
-                                  <h4>
-                                    {schedule.start_work_hour}-
-                                    {schedule.end_work_hour}
-                                  </h4>
-                                  <div className="hover">
                                     <h4>
-                                      {schedule.start_work_hour}-
-                                      {schedule.end_work_hour}
+                                      {formatTime(schedule.start_work_hour)} -{" "}
+                                      {formatTime(schedule.end_work_hour)}
                                     </h4>
-                                    <p>
-                                      {employee.department} -{" "}
-                                      {employee.position}
-                                    </p>
+                                    <div
+                                      className={`hover ${
+                                        isConflict ? "conflict" : ""
+                                      }`}
+                                    >
+                                      <h4>
+                                        {formatTime(schedule.start_work_hour)} -{" "}
+                                        {formatTime(schedule.end_work_hour)}
+                                      </h4>
 
-                                    <span>{employee.name}</span>
-                                  </div>
+                                      <p>
+                                        {employee.department} -{" "}
+                                        {employee.position}
+                                      </p>
+                                      {isConflict && (
+                                        <span className="conflict-text">
+                                          Conflict with{" "}
+                                          {conflict.conflictingEmployee.name}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                               );
                             } else {
@@ -249,7 +312,7 @@ function Supervisor() {
                             }}
                           >
                             <img
-                              src={require("./icons8-create-64.png")}
+                              src={require("./images/icons8-create-64.png")}
                               alt="Button Image"
                               className="button-image"
                             />
@@ -267,47 +330,48 @@ function Supervisor() {
                             <input
                               type="date"
                               placeholder="2000..."
+                              min={today}
                               onChange={(event) => {
                                 setWorkDate(event.target.value);
                               }}
                             />
                             <label>Starting Time: </label>
                             <input
-                              type="time"
-                              placeholder="Work Start..."
-                              onChange={(event) => {
-                                const time = new Date();
-                                time.setHours(event.target.value.split(":")[0]);
-                                time.setMinutes(
-                                  event.target.value.split(":")[1]
-                                );
-                                const workStart = time.toLocaleTimeString(
-                                  "en-US",
-                                  { hour: "numeric", minute: "numeric" }
-                                );
-                                setWorkStart(workStart);
-                              }}
-                            />
+                                type="time"
+                                placeholder="Work Start..."
+                                onChange={(event) => {
+                                  const inputTime = event.target.value;
+                                  const [hours, minutes] = inputTime.split(":");
+                            
+                                  const time = new Date();
+                                  time.setHours(hours);
+                                  time.setMinutes(minutes);
+
+                                  const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
+
+                                  setWorkStart(formattedTime); 
+                                }}
+                              />
                             <label>Ending Time: </label>
                             <input
-                              type="time"
-                              placeholder="Work End..."
-                              onChange={(event) => {
-                                const time = new Date();
-                                time.setHours(event.target.value.split(":")[0]);
-                                time.setMinutes(
-                                  event.target.value.split(":")[1]
-                                );
-                                const workEnd = time.toLocaleTimeString(
-                                  "en-US",
-                                  {
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                  }
-                                );
-                                setWorkEnd(workEnd);
-                              }}
-                            />
+                                type="time"
+                                placeholder="Work End..."
+                                onChange={(event) => {
+                                  const inputTime = event.target.value;
+                                  const [hours, minutes] = inputTime.split(":");
+
+                                  
+                                  const time = new Date();
+                                  time.setHours(hours);
+                                  time.setMinutes(minutes);
+
+                                
+                                  const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
+
+
+                                  setWorkEnd(formattedTime); 
+                                }}
+                              />
                             <button
                               onClick={() => {
                                 updateEmployee(selectedEmployeeId);

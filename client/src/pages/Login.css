@@ -3,9 +3,7 @@
 
 
 .login-container{
-    /* background: linear-gradient(to top left, #F5F8FA, #F5F8FA, #657786);
-    background-repeat: no-repeat; */
-    background-image: url("blackAbstract5.jpg");
+    background-image: url("./images/blackAbstract5.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-position:center center;
@@ -33,7 +31,7 @@
     background-color: #28292E;
     opacity: 85%;
     color: white;
-    /* outline: 3px solid black; */
+   
     box-shadow: 3px 3px black;
     border-radius: 10px;
     margin: 10em 10em 10em 10em;
@@ -56,7 +54,7 @@
 }
 
 
-/* label:after { content: ": " } */
+
 
 .submit{
     font-family: 'Hero', sans-serif;
@@ -64,7 +62,7 @@
     border-radius: 50px;
     width: 75%;
     height: 30px;
-    /* background: linear-gradient(to bottom right, #657786, #28292E); */
+   
     background-color:  #232429;
     color:rgba(255, 255, 255, 0.559); 
     border-top: none;
@@ -92,17 +90,17 @@ a:link {
     color: red;
   }
   
-  /* visited link */
+  
   a:visited {
     color:rgba(182, 182, 182, 0.559);
   }
   
-  /* mouse over link */
+ 
   a:hover {
     color: hotpink;
   }
   
-  /* selected link */
+  
   a:active {
     color: blue;
   }
@@ -112,8 +110,7 @@ a:link {
     border-radius: 5px;
     background-color:  rgba(128, 128, 128, 0.001);
     width: 75%;
-    /* margin-left: 300px;
-    margin-right: 300px; */
+   
     border-top: none;
     border-left: none;
     border-right: none;
@@ -122,29 +119,12 @@ a:link {
 
 }
 
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder { 
     color:rgba(255, 255, 255, 0.559); 
     font-family: 'Hero', sans-serif;
     opacity: 1; 
   }
 
-/* #myinput::-webkit-input-placeholder::before { 
-    content: ' ';
-    position: absolute;
-    top: 2px;  
-    left: 0px;
-    width: 14px;  
-    height: 14px;
-    background-image: url("/path/to/icons.png");  
-    background-repeat: no-repeat;
-    background-position: -48px 0px;  
-input.empty {
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
-}
-} */
 
 #forgotP{
     text-align: right;
@@ -273,4 +253,41 @@ input.empty {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
+  
+  .password-input {
+    position: relative;
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: 51px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .varr[type="password"] {
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+  
+  .varr[type="password"]::placeholder {
+    font-size: 14px;
+    letter-spacing: normal;
+  }
+  
+  .password-toggle {
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .password-toggle.visible {
+    color: #555;
+  }
+  
+  .password-toggle:focus {
+    outline: none;
+  }
   

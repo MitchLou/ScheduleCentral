@@ -5,7 +5,7 @@ function Popup(employee_ID) {
     <div className="popup">
       <div className="popup-inner">
         <img
-          src={require("./icons8-close-window-50.png")}
+          src={require("./images/icons8-close-window-50.png")}
           alt="Button Image"
           className="close-btn"
           onClick={() => employee_ID.setTrigger(false)}

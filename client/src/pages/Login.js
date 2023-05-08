@@ -1,8 +1,9 @@
-import "./Login.css";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Popup from "./Popup";
+
+import "./Login.css";
 
 function Login() {
   let navigate = useNavigate();
@@ -15,22 +16,23 @@ function Login() {
   const [position, setPosition] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState({
-          password: "", showPassword: false});
+    password: "",
+    showPassword: false,
+  });
   const [department, setDepartment] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
   const [role, setRole] = useState(null);
-  
+
+  Axios.defaults.withCredentials = true;
+
   const handleClickShowPassword = () => {
     setPassword({ ...password, showPassword: !password.showPassword });
   };
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-  const handlePasswordChange = (prop) => (event) => {
-    setPassword({ ...password, [prop]: event.target.value });
-  };
 
-  Axios.defaults.withCredentials = true;
+
+  const handlePasswordChange = (event) => {
+    setPassword({ ...password, password: event.target.value });
+  };
 
   const register = () => {
     Axios.post("http://localhost:3001/register", {
@@ -48,7 +50,7 @@ function Login() {
   const login = () => {
     Axios.post("http://localhost:3001/login", {
       username: username,
-      password: password,
+      password: password.password,
     })
       .then((response) => {
         if (response.data.message) {
@@ -76,7 +78,7 @@ function Login() {
   return (
     <div className="login-container">
       <div className="toptab">
-        <img className="LOGO" src={require("./schedulecLOGOFINALL.png")} />
+        <img className="LOGO" src={require("./images/schedulecLOGOFINALL.png")} />
       </div>
 
       <div className="login">
@@ -93,19 +95,23 @@ function Login() {
           />
         </div>
 
-        <div id="boxing">
-          <input
-            className="varr"
-            //type="text"
-            type={password.showPassword ? "text" : "password"}
-            placeholder="Password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              handlePasswordChange("password");
-            }}
-          />
-
-        </div>
+        <div id="boxing" className="password-input">
+  <input
+    className="varr"
+    type={password.showPassword ? "text" : "password"}
+    placeholder="Password"
+    value={password.password}
+    onChange={handlePasswordChange}
+  />
+  <i
+    className={`password-toggle ${
+      password.showPassword ? "visible" : ""
+    }`}
+    onClick={handleClickShowPassword}
+  >
+    Show
+  </i>
+</div>
         <button className="submit" onClick={login}>
           Login
         </button>

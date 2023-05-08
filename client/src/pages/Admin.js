@@ -53,6 +53,12 @@ function Admin() {
   const [department, setDepartment] = useState("");
 
   const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const today = new Date().toISOString().split("T")[0];
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const addEmployee = () => {
     Axios.post("http://localhost:3001/register", {
@@ -90,7 +96,7 @@ function Admin() {
         );
       }
       setEmployeeList(employees);
-      getSchedules(); // Fetch schedule list after setting employee list
+      getSchedules();
     });
   };
 
@@ -110,7 +116,7 @@ function Admin() {
     })
       .then((response) => {
         alert("Updated successfully!");
-        getSchedules(); // Reload schedules after update
+        getSchedules();
         if (isSameWeek(new Date(), new Date(workDate))) {
           addNotification(id);
         }
@@ -138,7 +144,7 @@ function Admin() {
   };
 
   const deleteEmployee = (id) => {
-    setSelectedEmployeeId(id); // Update selectedEmployeeId state
+    setSelectedEmployeeId(id);
     Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
       getEmployees();
       getSchedules();
@@ -165,30 +171,26 @@ function Admin() {
   };
 
   const handleForwardArrowClick = () => {
-    const newStart = addDays(weekStart, 7); // Increment start of week range by 7)
+    const newStart = addDays(weekStart, 7);
     const newEnd = addDays(weekEnd, 7);
     setWeekStart(newStart);
-    setWeekEnd(newEnd); // Update week range state
+    setWeekEnd(newEnd);
   };
 
-  // Function to handle backward arrow click
   const handleBackwardArrowClick = () => {
-    const newStart = addDays(weekStart, -7); // Increment start of week range by 7)
+    const newStart = addDays(weekStart, -7);
     const newEnd = addDays(weekEnd, -7);
     setWeekStart(newStart);
-    setWeekEnd(newEnd); // Update week range state
+    setWeekEnd(newEnd);
   };
 
   function formatTime(time) {
-    // Split the time value into hours and minutes
     const [hours, minutes] = time.split(":");
 
-    // Create a Date object and set the hours and minutes
     const formattedTime = new Date();
     formattedTime.setHours(hours);
     formattedTime.setMinutes(minutes);
 
-    // Format the time with AM/PM
     const options = { hour: "numeric", minute: "numeric", hour12: true };
     return formattedTime.toLocaleTimeString("en-US", options);
   }
@@ -210,12 +212,11 @@ function Admin() {
 
       for (const schedule of employee2Schedules) {
         if (
-          (schedule.start_work_hour <= work_end &&
-            schedule.end_work_hour >= work_start) || // Updated condition
-          (work_start <= schedule.end_work_hour &&
-            work_end >= schedule.start_work_hour) || // Updated condition
-          (work_start <= schedule.start_work_hour &&
-            work_end >= schedule.end_work_hour) // Updated condition
+          ((work_start < schedule.end_work_hour &&
+            work_end > schedule.start_work_hour) ||
+            (work_start < schedule.start_work_hour &&
+              work_end > schedule.end_work_hour)) &&
+          work_start != schedule.end_work_hour
         ) {
           return {
             conflictingShift: schedule.work_date,
@@ -225,13 +226,16 @@ function Admin() {
       }
     }
 
-    return false; // No conflicting shifts found
+    return false;
   }
 
   return (
     <div className="Attributes">
       <div className="header">
-        <img className="pagelogo" src={require("./schedulecLOGOFINALL.png")} />
+        <img
+          className="pagelogo"
+          src={require("./images/schedulecLOGOFINALL.png")}
+        />
         <h1>Employee Schedules</h1>
         <div className="logout">
           <button onClick={logOut}>LOG OUT</button>
@@ -284,14 +288,25 @@ function Admin() {
               setUsernameReg(e.target.value);
             }}
           />
-          <label className="form-label">Password:</label>
-          <input
-            className="form-input"
-            type="text"
-            onChange={(e) => {
-              setPasswordReg(e.target.value);
-            }}
-          />
+          <div className="password-input-container">
+            <label className="form-label">Password:</label>
+            <div className="password-input-wrapper">
+              <input
+                className="form-input"
+                type={showPassword ? "text" : "password"}
+                value={passwordReg}
+                onChange={(e) => {
+                  setPasswordReg(e.target.value);
+                }}
+              />
+              <button
+                className="toggle-password-button"
+                onClick={handleTogglePassword}
+              >
+                {"Show"}
+              </button>
+            </div>
+          </div>
 
           <label className="form-label" htmlFor="Role">
             Role:
@@ -323,18 +338,19 @@ function Admin() {
           <div className="week-picker">
             <button className="arrow-button" onClick={handleBackwardArrowClick}>
               <img
-                src={require("./icons8-left-64.png")}
+                src={require("./images/icons8-left-64.png")}
                 alt="Button Image"
                 className="backward-arrow"
               />
             </button>
+
             <span className="week-span">
               Week {format(weekStart, "MM/dd/yyyy")} -{" "}
               {format(weekEnd, "MM/dd/yyyy")}
             </span>
             <button className="arrow-button" onClick={handleForwardArrowClick}>
               <img
-                src={require("./icons8-right-64.png")}
+                src={require("./images/icons8-right-64.png")}
                 alt="Button Image"
                 className="forward-arrow"
               />
@@ -441,7 +457,7 @@ function Admin() {
                               }}
                             >
                               <img
-                                src={require("./icons8-create-64.png")}
+                                src={require("./images/icons8-create-64.png")}
                                 alt="Button Image"
                                 className="button-image"
                               />
@@ -460,6 +476,8 @@ function Admin() {
                               <input
                                 type="date"
                                 placeholder="2000..."
+                                min={today}
+                                value={workDate}
                                 onChange={(event) => {
                                   setWorkDate(event.target.value);
                                 }}
@@ -474,18 +492,17 @@ function Admin() {
                                   const inputTime = event.target.value;
                                   const [hours, minutes] = inputTime.split(":");
 
-                                  // Create a new Date object and set the hours and minutes
+                                  
                                   const time = new Date();
                                   time.setHours(hours);
                                   time.setMinutes(minutes);
 
-                                  // Format the time as HH:MM
+                                  
                                   const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
 
-                                  // Store the formatted time in MySQL or use it as needed
-                                  // Send it to the server for storage or further processing
+                                
 
-                                  setWorkStart(formattedTime); // Optionally, update the state if required
+                                  setWorkStart(formattedTime); 
                                 }}
                               />
                               <label className="form-label">
@@ -498,18 +515,17 @@ function Admin() {
                                   const inputTime = event.target.value;
                                   const [hours, minutes] = inputTime.split(":");
 
-                                  // Create a new Date object and set the hours and minutes
+                                 
                                   const time = new Date();
                                   time.setHours(hours);
                                   time.setMinutes(minutes);
 
-                                  // Format the time as HH:MM
+                                 
                                   const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
 
-                                  // Store the formatted time in MySQL or use it as needed
-                                  // Send it to the server for storage or further processing
+                                  
 
-                                  setWorkEnd(formattedTime); // Optionally, update the state if required
+                                  setWorkEnd(formattedTime); 
                                 }}
                               />
 

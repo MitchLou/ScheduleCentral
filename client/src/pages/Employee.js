@@ -104,10 +104,24 @@ function Employee() {
     setWeekEnd(newEnd); // Update week range state
   };
 
+  function formatTime(time) {
+    // Split the time value into hours and minutes
+    const [hours, minutes] = time.split(":");
+
+    // Create a Date object and set the hours and minutes
+    const formattedTime = new Date();
+    formattedTime.setHours(hours);
+    formattedTime.setMinutes(minutes);
+
+    // Format the time with AM/PM
+    const options = { hour: "numeric", minute: "numeric", hour12: true };
+    return formattedTime.toLocaleTimeString("en-US", options);
+  }
+
   return (
     <div className="Attributes">
       <div className="header">
-        <img className="pagelogo" src={require("./schedulecLOGOFINALL.png")} />
+        <img className="pagelogo" src={require("./images/schedulecLOGOFINALL.png")} />
         <h1>My Schedule</h1>
         <div className="logout">
           <button onClick={logOut}>LOG OUT</button>
@@ -117,7 +131,7 @@ function Employee() {
       <div className="container">
 
       <img
-          src={require("./icons8-notifications-64.png")}
+          src={require("./images/icons8-notifications-64.png")}
           alt="buttonimage"
           className="notipopupButton"
           onClick={() => {
@@ -128,7 +142,7 @@ function Employee() {
         <div className="week-picker">
           <button className="arrow-button" onClick={handleBackwardArrowClick}>
             <img
-              src={require("./icons8-left-64.png")}
+              src={require("./images/icons8-left-64.png")}
               alt="Button Image"
               className="backward-arrow"
             />
@@ -139,7 +153,7 @@ function Employee() {
           </span>
           <button className="arrow-button" onClick={handleForwardArrowClick}>
             <img
-              src={require("./icons8-right-64.png")}
+              src={require("./images/icons8-right-64.png")}
               alt="Button Image"
               className="forward-arrow"
             />
@@ -230,13 +244,13 @@ function Employee() {
                               return (
                                 <div key={cellIndex}>
                                   <h4>
-                                    {schedule.start_work_hour}-
-                                    {schedule.end_work_hour}
+                                  {formatTime(schedule.start_work_hour)} -{" "}
+                                      {formatTime(schedule.end_work_hour)}
                                   </h4>
                                   <div className="hover">
                                     <h4>
-                                      {schedule.start_work_hour}-
-                                      {schedule.end_work_hour}
+                                    {formatTime(schedule.start_work_hour)} -{" "}
+                                      {formatTime(schedule.end_work_hour)}
                                     </h4>
                                     <p>
                                       {employee.department} -{" "}
