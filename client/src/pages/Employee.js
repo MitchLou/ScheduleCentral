@@ -184,7 +184,12 @@ function Employee() {
                 <button
                   className="delete-notifications-button"
                   onClick={() => {
+                    const confirmBox = window.confirm(
+                      "You will not be able to view notifications again after they are deleted. \nAre you sure you want to proceed?"
+                    )
+                    if (confirmBox == true){
                     deleteNotifications(employeeID[0]?.id_employees);
+                    }
                   }}
                 >
                   Delete All Notifications
