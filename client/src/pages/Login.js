@@ -129,7 +129,7 @@ function Login() {
           <form class="register-form">
   <label for="fullname">Full Name:</label>
   <input
-    type="text"
+    type="text" required
     id="fullname"
     onChange={(e) => {
       setName(e.target.value);
@@ -145,7 +145,7 @@ function Login() {
   />
 
   <label for="department">Department:</label>
-  <select
+  <select required
     type = 'text'
     id="department"
     onChange={(e) => {
@@ -164,7 +164,7 @@ function Login() {
 
   <label for="username">Username:</label>
   <input
-    type="text"
+    type="text" required
     id="username"
     onChange={(e) => {
       setUsernameReg(e.target.value);
@@ -173,7 +173,7 @@ function Login() {
 
   <label for="password">Password:</label>
   <input
-    type="text"
+    type="text" required
     id="password"
     onChange={(e) => {
       setPasswordReg(e.target.value);
